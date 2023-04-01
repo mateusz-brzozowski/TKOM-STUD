@@ -7,44 +7,120 @@ Język programowania: `Python`
 
 # przykłady wykorzystania języka
 
-[//]: # (TODO: Bardziej złożone przykłady wykorzystania, skomplikowane wyrażenia)
+- definiowanie typów
+```c++
+def main() {
+    int a = 2;
+    int b = a;
+    dec c = 2.95;
+    bool d = False;
 
-- wyznaczanie pola figury
-```c++
-Triangle t = Triangle(3, 4, 55);
-print(t.area());
+    String string = "Hello World!";
+    dec negative = -1.5;
+
+    int x = a * (b + (int) c);
+}
 ```
-- wyznaczanie obwodu figury
+
+- wyznaczanie pola, obwodu, przekątnej, przesuwanie o wektor figury
 ```c++
-Rectangle r = Rectangle(5);
-print(r.perimeter());
-```
-- wyznaczanie przekątnej figury
-```c++
-Square s = Square(5);
-print(s.diagonal());
+def main() {
+    Triangle t = Triangle(0, 0, 3, 4, 55);
+    print(t.area());
+
+    Rectangle r = Rectangle(0, 0, 5);
+    print(r.perimeter());
+
+    Square s = Square(0, 0, 5);
+    print(s.diagonal());
+
+    s.move(2, 3);
+}
 ```
 - dodawanie/usuwanie figur do/z kolekcji i wyświetlanie ich
-[//]: # (TODO: punkt wywalić do figury)
 ```c++
-Canvas c = Canvas();
-Circle circle = Circle(6);
-Polygon p = Polygon(5, 6);
-Rhomb r = Rhomb(4, 60);
-Trapeze t = Trapeze(6, 8, 60, 90);
-c.push(circle, 0,0);
-c.push(p, 10, 10);
-c.push(r, 1, 10);
-c.push(t, -5, 8);
-c.pop();
-c.display();
+def main(){
+    Canvas c = Canvas();
+    Circle circle = Circle(0, 0, 6);
+    Polygon p = Polygon(10, 20, 5, 6);
+    Rhomb r = Rhomb(6, 20, 4, 60);
+    Trapeze t = Trapeze(8, 9, 6, 8, 60, 90);
+    c.push(circle);
+    c.push(p);
+    c.push(r);
+    c.push(t);
+    c.pop();
+    c.display();
+}
 ```
-- przesuwanie figur o wektor
+- pętle, instrukcje warunkowe i iterowanie po kolekcji
 ```c++
-Circle shape = Circle(5)
-shape.move(2,3)
-```
+def main(){
+    Rectangle r = Rectangle(0, 0, 5);
+    dec r_per = r.perimeter();
 
+    Square s = Square(0, 0, 5);
+    dec s_per = s.perimeter();
+
+    dec suma = 0;
+
+    if (r_per > s_per) {
+        print("Prostokąt większy")
+    } else if ( s.area() != 2.5 or r_per == 2) {
+        print(s.diagonal());
+    } else {
+        suma = r_per + s_per;
+        print(suma);
+    }
+
+    int i = 0;
+    Canvas c = Canvas();
+    while ( i <= 20 ) {
+        c.add(Cricle(i, i, i));
+        i = i - 1;
+    }
+
+    for( Shape shape : c){
+        shape.move(3, 10);
+    }
+
+    c.display();
+}
+```
+- definiowanie funkcji i rekursywne wywołanie
+```c++
+def Square gasket(int x, int y, dec dim, Canvas c){
+    if ( dim < 8) {
+        return Square(x, y, dim);
+    } else {
+        dec = new_dim = dim / 2;
+        gasket(x, y, new_dim);
+        gasket(x + new_dim, y, new_dim);
+        gasket(x + new_dim, y + new_dim, new_dim);
+    }
+
+}
+
+def Triangle getTriangle(int x, int y, int height, int width){
+    return Triangle(x, y, width / 2, height, 90);
+}
+
+def printInformation(Shape shape){
+    # pole
+    print(shape.area());
+    # obwód
+    print(shape.perimeter());
+}
+
+def main(){
+    Canvas c = Canvas();
+    c.add(gasket(0,0, 248));
+    c.display();
+    Triangle t = getTriangle(0, 10, 20, 30);
+
+    printInformation(t);
+}
+```
 # Opis funkcjonalności
 
 Język do opisu figur geometrycznych i ich właściwości umożliwia opisanie i obliczanie charakterystycznych wielkości dla różnych typów figur geometrycznych.
@@ -87,11 +163,10 @@ Figury geometryczne i ich charakterystyczne wielkości:
     - Kąt wewnętrzny (α) - kąt pomiędzy dwoma sąsiednimi krawędziami
     - Promień okręgu wpisanego (r) i promień okręgu opisanego (R)
 
-Metody dla wszystkich figur:
-
-- Pole powierzchni (area)
-- Obwód (perimeter)
-- Przesuń o wektor (move)
+- Shape, jest to figura nadrzędna, która będzie zawierała metody, które można wyznaczyć i wykonać na wszystkich figurach geometrycznych:
+    - Pole powierzchni (area)
+    - Obwód (perimeter)
+    - Przesuń o wektor (move)
 
 Kolekcja figur służąca do wyświetlania:
 
@@ -100,61 +175,76 @@ Kolekcja figur służąca do wyświetlania:
     - usuwanie ostatnio dodanego elementu z kolekcji (pop)
     - wyświetlanie kolekcji (display)
 
-# Wymagania funkcjonalne i niefunkcjonalne
+Założenia dotyczące programu:
+- Każda instrukcja musi być zakończona znakiem `;`
+- Program musi zawierać funkcję `main()`, która jest funkcją startową
+- Program składa się z bloków funkcji, które zawarte są między znakami `{`, `}`
 
-[//]: # (TODO: Pomieszane wymagania z założeniami, dodać wymagania niefunkcjonalne)
+# Wymagania funkcjonalne
 
 1. Typowanie statyczne, silne typowanie, Mutowalność
-2. Każda instrukcja musi być zakończona znakiem `;`
-3. Program musi zawierać funkcję `main()`, która jest funkcją startową
-4. Program składa się z bloków funkcji, które zawarte są między znakami `{`, `}`
-5. Funkcję mogę być wywoływane rekursywnie
-6. Zmienne widoczne są jedynie w blokach, poza nimi już nie
-7. Rzutowanie wartości liczbowych, ucięcie cyfr po przecinku
-8. W wywołaniach funkcji typy, przekazujemy przez referencję
-9. Typy danych:
+2. Funkcję mogę być wywoływane rekursywnie
+3. Zmienne widoczne są jedynie w blokach, poza nimi już nie
+4. Rzutowanie wartości liczbowych, ucięcie cyfr po przecinku
+5. W wywołaniach funkcji typy, przekazujemy przez referencję
+
+# Wymaganie niefunkcjonalne
+
+1. Język powinien działać na różnych platformach i systemach operacyjnych takich jak Windows, Linux i macOS
+2. Język powinien być dobrze udokumentowany, wszystkie jego funkcjonaliści i sposób korzystania będzie opisany w dokumentacji
+
+# Semantyka
+
+1. Typy danych:
 - proste
     - `int` - typ liczby całkowita,
     - `dec` - typ zmienno przecinkowy (liczba dziesiętna - decimal)
     - `bool` - wartość logiczna (prawda/fałsz)
 - złożone
     - `String` - ciąg znaków
-    [//]: # (TODO: dodać shape)
-    - `Circle(value)` - koło
+    - `Shape` - figura, jest to typ nadrzędny, dla pozostałych figur
+    - `Circle(value, value, value)` - koło
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy promień koła, promień może być typu int lub float z wartością dodatnią.
-    - `Square(value)` - kwadrat
+    - `Square(value, value, value)` - kwadrat
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy bok kwadratu, bok może być typu int lub float z wartością dodatnią.
-    - `Rectangle(value, value)` - prostokąt
+    - `Rectangle(value, value, value, value)` - prostokąt
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy boki kwadratu, boki mogą być typu int lub float z wartością dodatnią
-    - `Triangle(value, value, value)` - trójkąt
+    - `Triangle(value, value, value, value, value)` - trójkąt
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy dwa boki trójkąta i kąt pomiędzy nimi, boki mogą być typu int lub float z wartością dodatnią, natomiast kąt jest typu int z zakresu od 0 do 180.
-    - `Rhomb(value, value, value)` - romb
+    - `Rhomb(value, value, value, value, value)` - romb
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy bok rombu i kąt pomiędzy nimi, bok może być typu int lub float z wartością dodatnią, natomiast kąt jest typu int z zakresu od 0 do 180.
-    - `Trapeze(value, value, value, value)` - trapez
+    - `Trapeze(value, value, value, value, value, value)` - trapez
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy dwie podstawy trapezu i kąty przy dłuższej podstawie, boki mogą być typu int lub float z wartością dodatnią, natomiast kąty są typu int z zakresu od 0 do 90.
-    - `Polygon(value, value)` - wielokąt foremny
+    - `Polygon(value, value, value, value)` - wielokąt foremny
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy bok i ilość boków, bok może być typu int lub float z wartością dodatnią, natomiast ilość boków może być typu int o wartości co najmniej 3.
     - `Canvas` - kolekcja figur
         - do kolekcji możemy dodawać figury `push(shape)`
         - usuwanie elementu z kolekcji `pop()`
         - wyświetlanie kolekcji `display()`
-7. operatory arytmetyczne:
+2. operatory arytmetyczne:
 - `+` - dodawanie
 - `-` - odejmowanie
 - `*` - mnożenie
 - `/` - dzielenie
-8. operatory logiczne:
+3. operatory logiczne:
 - `and` - koniunkcja
 - `or` - alternatywa
 - `not` - negacja
-9. operatory porównania:
+4. operatory porównania:
 - `>` - większy
 - `>=` - większy równy
 - `<` - mniejszy
 - `<=` - mniejszy równy
 - `==` - równy
 - `!=` - nierówny
-9. instrukcja warunkowa:
+5. instrukcja warunkowa:
 - `if`:
 ```c++
 if (warunek){
@@ -165,7 +255,7 @@ if (warunek){
 
 };
 ```
-10. pętle
+6. pętle
 - `while` - pętla warunkowe
 ```c++
 while (warunek) {
@@ -180,7 +270,7 @@ for ( Shape shape : canvas){
 
 };
 ```
-11. Funkcje. Jeżeli funkcja zwraca wartość musi rozpoczynać się od typu, który zwraca, natomiast, jeżeli funkcja nic nie zwraca musi on zaczynać się od słowa `def`
+7. Funkcje. Jeżeli funkcja zwraca wartość musi rozpoczynać się od typu, który zwraca, natomiast, jeżeli funkcja nic nie zwraca musi on zaczynać się od słowa `def`
 ```c++
 def Rectangle nazwa( int a, dec b){
     Circle circle = Circle(a);
@@ -192,18 +282,22 @@ def nazwa(Rectangle r){
     print(r.area());
 };
 ```
-12. Komentarze, umożliwiamy komentarze w jednej linii
+8. Komentarze, umożliwiamy komentarze w jednej linii
 ```python
 # to jest komentarz
 ```
-13. Deklaracja zmiennych, umożliwiamy przypisywanie nowej wartości do zmiennych
+9. Deklaracja zmiennych, umożliwiamy przypisywanie nowej wartości do zmiennych
 ```c++
 bool isSquare = False;
 bool isCircle = True;
 bool isRect = isSquare;
 isCircle = isRect;
 ```
-
+10. instrukcja print, służąca do wypisywania tekstu na ekranie
+```python
+Triangle t = Triangle(3, 4, 55);
+print(t.area());
+```
 # Tokeny
 
 ```py
@@ -235,7 +329,6 @@ BOOL_FALSE : "False",
 String : "String",
 
 STRING_QUOTE : "\"",
-STRING_QUOTE : "\`",
 
 Shape : "Shape",
 Circle : "Circle",
@@ -270,20 +363,61 @@ FOR : "for",
 ```
 
 # Gramatyka
-[//]: # (TODO: zrobić XD, Priorytet operatorów, typowe błędy: konwersja między typami , operator "-" uważać, że to jeden z najniższych operatorów)
+```EBNF
+argument_dec        = type, identifier;
+argument_list       = argument_dec, {',', argument_dec};
+fun_declaration     = "def", [type], identifier, '(', [argument_list], ')', block;
 
-```py
-lowercase_letter    = 'a' | 'b' | ... | 'z'
-uppercase_letter    = 'A' | 'B' | ... | 'Z'
-not_zero_digit      = '1' | '2' | ... | '9'
-zero                = '0'
-digit               = zero | not_zero_digit
-subtract_operator   = "+" | "-"
-multiply_operator   = "*" | "/"
+function_call       = identifier, '(', [expression, {',', expression}], ')';
+method_call         = expression, '.', function_call;
+cast                = '(', ("int" | "dec"), ')', factor;
 
-IF                  = "if", '(', LOGICAL_CONDITION, ')', STATEMENT, [ "else", STATEMENT]
+return_statement    = "return", expression, ';';
+if_statement        = "if", '(', logical_expression, ')', block, ["else", block];
+while_statement     = "while", '(', logical_expression, ')', block;
+iterate_statement   = "for", '(', type, identifier, ':', expression, ')';
+declaration         = type, identifier, ['=', expression], ';';
+assignment          = identifier, '=', expression, ';';
+block               = '{',  {statement}, '}';
+statement           = assignment | if_statement | while_statement | iterate_statement | declaration | expression, ';';
 
-STATEMENT           = IF | WHILE | FOR |
+expression          = identifier | sub_expression | logical_expression | function_call | method_call | '(', expression, ')';
+
+logical_expression  = or_expression | "not" logical_expression;
+or_expression       = and_expression, {or_operator, and_expression};
+and_expression      = relative_expression, {and_operator, relative_expression};
+relative_expression = sub_expression, {relative_operator, sub_expression};
+sub_expression      = mul_expression, {subtract_operator, mul_expression};
+mul_expression      = factor, {multiply_operator, factor};
+factor              = ["-"], number | identifier | function_call | method_call | cast | '(', logical_expression, ')';
+
+subtract_operator   = '+' | '-';
+multiply_operator   = '*' | '/';
+relative_operator   = '>' | '>=' | '<' | '<=' | '==' | '!=';
+unary_operator      = '-' | '!';
+or_operator         = 'or';
+and_operator        = 'and';
+access_operator     = '.';
+
+type                = simple_type | complex_type
+simple_type         = "int" | "dec" | "bool";
+complex_type        = "Shape" | "Circle" | "Square" | "Rectangle" | "Triangle" | "Rhomb" | "Trapeze" | "Polygon" | "Canvas";
+
+identifier          = letter, {letter | digit};
+
+string              = '"', {CHARS}, '"';
+comment             = '#', {CHARS}, '\n';
+chars               = letter | digit;
+
+number              = INTEGER | DECIMAL;
+integer             = zero | (not_zero_digit, {digit});
+decimal             = INTEGER, '.', digit, {digit};
+bool                = "True" | "False";
+
+digit               = zero | not_zero_digit;
+not_zero_digit      = '1' | '2' | ... | '9';
+zero                = '0';
+letter              = 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z';
 ```
 
 # Obsługa błędów:
@@ -318,8 +452,9 @@ Przykładowy sposób uruchomienia:
 $ ./run.py code.txt
 ```
 
-
-[//]: # (TODO: jak wygląda wynik)
+Wynik programu:
+- wyświetlenie się nowego okna, na którym narysowane są figury
+- wypisanie tekstu w konsoli
 
 # Testowanie
 
@@ -331,8 +466,16 @@ Wykorzystywana biblioteka: `pytest`
 
 # Biblioteki
 
-[//]: # (TODO: z jakich bibliotek będę korzystał)
+- `matplotlib` - biblioteka służąca do wyświetlania figur geometrycznych i nie tylko na ekranie
+- `pytest` - biblioteka służąca do pisania testów w języku python
+- `typing` - biblioteka umożliwiająca definiowanie typów zmiennych i argumentów funkcji w celu poprawy czytelności i jakości kodu
+- `math` - biblioteka zawierająca funkcje matematyczne
+- `enum` - biblioteka umożliwiająca definiowanie i wykorzystywanie typów wyliczeniowych
 
+# Sposób realizacji
 
+- Analizator leksykalny - Odpowiedzialny za przerobienie kodu źródłowego na sekwencję tokenów
 
-[//]: # (TODO: wykorzystywane struktury danych ????)
+- Analizator składniowy - Sprawdza, czy sekwencja tokenów odpowiada zdefiniowanemu w gramatyce języka programowania i tworzy z nich drzewo składniowe.
+
+- Analizator semantyczny - Wykonuje analizę semantyczną na drzewie składniowym, sprawdzając poprawność wykorzystania zmiennych, typów danych i wyrażeń.
