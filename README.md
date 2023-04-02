@@ -64,10 +64,12 @@ def main(){
 
     dec suma = 0;
 
-    if (r_per > s_per) {
-        print("Prostokąt większy")
-    } else if ( s.area() != 2.5 or r_per == 2) {
+    if ( s.area() != 2.5 or r_per == 2) {
         print(s.diagonal());
+    }
+
+    if (r_per > s_per) {
+        print("Prostokąt większy");
     } else {
         suma = r_per + s_per;
         print(suma);
@@ -80,7 +82,7 @@ def main(){
         i = i - 1;
     }
 
-    for( Shape shape : c){
+    for ( Shape shape : c) {
         shape.move(3, 10);
     }
 
@@ -364,80 +366,172 @@ FOR : "for",
 
 # Gramatyka
 ```EBNF
+program             = {fun_declaration};
 argument_dec        = type, identifier;
 argument_list       = argument_dec, {',', argument_dec};
-fun_declaration     = "def", [type], identifier, '(', [argument_list], ')', block;
+fun_declaration     = "def", [type], identifier,
+                    '(', [argument_list], ')', block;
 
-function_call       = identifier, '(', [expression, {',', expression}], ')';
+function_call       = identifier, '(', [expression,
+                    {',', expression}], ')';
 method_call         = expression, '.', function_call;
 cast                = '(', ("int" | "dec"), ')', factor;
 
 return_statement    = "return", expression, ';';
-if_statement        = "if", '(', logical_expression, ')', block, ["else", block];
+if_statement        = "if", "(", expression, ")", block,
+                    ["else", block] ;
 while_statement     = "while", '(', logical_expression, ')', block;
-iterate_statement   = "for", '(', type, identifier, ':', expression, ')';
+iterate_statement   = "for", '(', type, identifier, ':',
+                    expression, ')', block;
 declaration         = type, identifier, ['=', expression], ';';
 assignment          = identifier, '=', expression, ';';
 block               = '{',  {statement}, '}';
-statement           = assignment | if_statement | while_statement | iterate_statement | declaration | expression, ';';
+statement           = assignment | if_statement | while_statement
+                    | iterate_statement | declaration | expression, ';';
 
-expression          = identifier | sub_expression | logical_expression | function_call | method_call | '(', expression, ')';
+expression          = identifier | sub_expression | logical_expression
+                    | function_call | method_call | '(', expression, ')';
 
 logical_expression  = or_expression | "not" logical_expression;
 or_expression       = and_expression, {or_operator, and_expression};
-and_expression      = relative_expression, {and_operator, relative_expression};
+and_expression      = relative_expression,
+                    {and_operator, relative_expression};
 relative_expression = sub_expression, {relative_operator, sub_expression};
 sub_expression      = mul_expression, {subtract_operator, mul_expression};
 mul_expression      = factor, {multiply_operator, factor};
-factor              = ["-"], number | identifier | function_call | method_call | cast | '(', logical_expression, ')';
+factor              = ["-"], number | identifier | string
+                    | function_call | method_call
+                    | cast | '(', logical_expression, ')';
 
 subtract_operator   = '+' | '-';
 multiply_operator   = '*' | '/';
 relative_operator   = '>' | '>=' | '<' | '<=' | '==' | '!=';
-unary_operator      = '-' | '!';
 or_operator         = 'or';
 and_operator        = 'and';
 access_operator     = '.';
 
-type                = simple_type | complex_type
+type                = simple_type | complex_type;
 simple_type         = "int" | "dec" | "bool";
-complex_type        = "Shape" | "Circle" | "Square" | "Rectangle" | "Triangle" | "Rhomb" | "Trapeze" | "Polygon" | "Canvas";
+complex_type        = "Shape" | "Circle" | "Square"
+                    | "Rectangle" | "Triangle"| "Rhomb"
+                    | "Trapeze" | "Polygon" | "Canvas";
 
 identifier          = letter, {letter | digit};
 
-string              = '"', {CHARS}, '"';
-comment             = '#', {CHARS}, '\n';
+string              = '"', {chars}, '"';
+comment             = '#', {chars}, '\n';
 chars               = letter | digit;
 
-number              = INTEGER | DECIMAL;
+number              = integer | decimal;
 integer             = zero | (not_zero_digit, {digit});
-decimal             = INTEGER, '.', digit, {digit};
+decimal             = integer, '.', digit, {digit};
 bool                = "True" | "False";
 
 digit               = zero | not_zero_digit;
-not_zero_digit      = '1' | '2' | ... | '9';
+not_zero_digit      = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 zero                = '0';
-letter              = 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z';
+letter              = #'[a-z]' | #'[A-Z]' ;
 ```
 
 # Obsługa błędów:
 
 - Napotkanie błędu powoduje wyświetlenie odpowiedniego komunikatu użytkownikowi.
 
-Komunikat składa się z numera wiersza lini oraz numera kolumny w którym dany błąd wystąpił, następnie wyświetlana jest treść komunikatu
+Komunikat składa się z numera wiersza lini oraz numera kolumny w którym dany błąd wystąpił, następnie wyświetlana jest treść komunikatu.
 
-[//]: # (TODO: podać różne rodzaje błędów jakie będę obsługiwał np. składniowe, semantyczne wymienić kategorie jakie będą obsługiwane i przykłady Expected ';' ponieważ oczekiwano tego i tametego bo tu)
+Napotkanie błędu nie powoduje zakończenia pracy programu, dopiero napotkanie błędu krytycznego, kończy działanie problemu.
 
+Błędy podzielone są na trzy kategorie, w zależności od tego w którym miejscu wystąpią, wyróżniamy:
+
+- `błędny leksykalne`
+
+Kod:
 ```cpp
 def main(){
-    int a = 1
-    Circle
+    int x = 123123123123;
 }
 ```
-```c++
-Error [2, 14]: Expected ';'
+Komunikat błędu:
+```cpp
+Error [2, 13]: Type 'int' value out of range.
 ```
+Kod:
+```cpp
+def main(){
+    int x = 123$123;
+}
+```
+Komunikat błędu:
+```cpp
+Error [2, 16]: Invalid character '$'.
+```
+- `błędy składniowe`
 
+Kod:
+```cpp
+def main() {
+   printf("HI")
+}
+```
+Komunikat błędu:
+```cpp
+Error [2, 16]: Invalid token, expected ';' before '}'.
+```
+Kod:
+```cpp
+def main() {
+   int x 0;
+}
+```
+Komunikat błędu:
+```cpp
+Error [2, 9]: Missing ';' before '0'.
+```
+Kod:
+```cpp
+def main() {
+   int x = 1 + (2  2);
+}
+```
+Komunikat błędu:
+```cpp
+Error [2, 19]: Missing operator before '2'.
+```
+- `błędy semantyczne`
+
+Kod:
+```cpp
+int a = 1;
+bool b = False;
+int c = a + b;
+```
+Komunikat błędu:
+```cpp
+Error [3, 11]: Invalid conversion from 'bool' to 'int'.
+```
+Kod:
+```cpp
+int a = 1;
+bool b = 0;
+int c = a / b;
+```
+Komunikat błędu:
+```cpp
+Error [3, 11]: Division by zero.
+```
+Kod:
+```cpp
+def pow(int a){
+    return a * a;
+}
+def main(){
+    pow(True);
+}
+```
+Komunikat błędu:
+```cpp
+Error [5, 0]: Invalid 1. argument conversion from 'bool' to 'int'.
+```
 # Sposób Uruchomiania
 
 Program można uruchomiać za pomocą programu napisanego w języku python podając odpowiednie do argumenty przy jego wywołaniu.
@@ -462,7 +556,63 @@ Projekt zawiera testy jednostkowe oraz testy integracyjne, sprawdzające poprawn
 
 Wykorzystywana biblioteka: `pytest`
 
-[//]: # (TODO: Przykłady testów i te negatywne)
+Testy podzielone sa na kilka kategorii:
+- działanie analizatora leksykalnego, czy podany kod został przetworzony, na poprawną listę tokenów, oczywiście będą sprawdzane też przykłady wymienione w sekcji `Obsługa błędów`:
+
+Kod:
+```cpp
+int a = 10 + 5 * 2;
+```
+Przykładowy Wynik:
+```c++
+<int, type>
+<a, identifier>
+<=, symbol>
+<10, integer>
+<+, symbol>
+<5, integer>
+<* , symbol>
+<2, integer>
+<;, symbol>
+```
+Kod:
+```cpp
+def main(){
+    int x = 123$123;
+}
+```
+Przykładowy Wynik:
+```cpp
+Error [2, 16]: Invalid character '$'.
+```
+- działanie analizatora składniowego, czy listę tokenów został przetworzony na poprawne drzewo składniowe, oczywiście będą sprawdzane też przykłady wymienione w sekcji `Obsługa błędów`
+
+- Test programu zawierającego błąd składniowy
+```cpp
+def main() {
+    int x = 5;
+    int y = 10;
+    if (x < y {
+        print("x is less than y");
+    }
+}
+```
+Oczekiwany wynik:
+```cpp
+Error [4, 14]: Invalid token, expected ')' before '{'.
+```
+- działanie analizatora semantycznego, czy program poprawnie działa, czy rzucane są odpowiednie wyjątki, oczywiście będą sprawdzane też przykłady wymienione w sekcji `Obsługa błędów`
+
+```cpp
+def divide(a: int, b: int) {
+    return a / b;
+}
+```
+Oczekiwany wynik:
+```cpp
+Error [4, 14]: Invalid return type, expected non-return type
+```
+- Do testów zostaną załączone oczywiście wszystkie przykładowe fragmenty kodu podane w sekcji `przykłady wykorzystania języka`, a także te z sekcji `Obsługa błędów`
 
 # Biblioteki
 
@@ -479,3 +629,8 @@ Wykorzystywana biblioteka: `pytest`
 - Analizator składniowy - Sprawdza, czy sekwencja tokenów odpowiada zdefiniowanemu w gramatyce języka programowania i tworzy z nich drzewo składniowe.
 
 - Analizator semantyczny - Wykonuje analizę semantyczną na drzewie składniowym, sprawdzając poprawność wykorzystania zmiennych, typów danych i wyrażeń.
+
+
+# Autor
+
+Mateusz Brzozowski, 310608
