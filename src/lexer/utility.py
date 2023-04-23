@@ -5,7 +5,7 @@ from lexer.token_manager import TokenType
 MAX_INT: int = 2 ** 31 - 1
 MAX_FLOAT: int = 2 ** 31 - 1
 MAX_STRING_LENGTH: int = 20
-MAX_IDENTIFIER_LENGTH: int = 256
+MAX_IDENTIFIER_LENGTH: int = 20
 EOF_TYPES: List[str] = ['\n', '\r']
 EOF_CHARS: List[str] = ['', None]
 

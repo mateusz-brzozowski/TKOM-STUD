@@ -23,7 +23,7 @@ class ErrorManager:
         pass
 
     def add_error(self, error_type: ErrorTypes, token: Token) -> None:
-        self.errors.append((error_type, deepcopy(token)))
+        self.errors.append((deepcopy(error_type), deepcopy(token)))
 
     def print_errors(self) -> None:
         for error_type, token in self.errors:

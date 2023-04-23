@@ -52,7 +52,7 @@ class Lexer:
     def _is_white(self) -> bool:
         if self.character in EOF_CHARS or not self.character.isspace():
             return False
-        while self.character.isspace():
+        while self.character not in EOF_CHARS and self.character.isspace():
             if self._check_eof():
                 continue
             self._next_char()
@@ -176,7 +176,7 @@ class Lexer:
         value = ""
         number_of_chars = 0
         new_line = self.new_line_char if self.new_line_char else EOF_TYPES
-        while self._next_char() not in new_line:
+        while self._next_char() not in new_line and self.character:
             if number_of_chars == MAX_STRING_LENGTH:
                 self._raise_error(ErrorTypes.COMMENT_OVERFLOW, value)
                 return True
