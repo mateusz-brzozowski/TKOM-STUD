@@ -1,0 +1,6 @@
+.vscode
+.pytest_cache
+xdd
+__pycache__
+kod1.txt
+pyproject.toml
