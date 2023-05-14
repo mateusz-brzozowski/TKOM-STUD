@@ -34,7 +34,7 @@ from parser.objects.expression import (
     IdentifierExpression,
     CastExpression
 )
-from error.error_manager import ErrorManager, ErrorTypes
+from error.error_manager import ParserErrorManager, ErrorTypes
 from utility.utility import (
     DECLARATION_TYPES,
     VALUE_TYPE,
@@ -47,16 +47,16 @@ from utility.utility import (
 
 class Parser:
     lexer: Lexer
-    error_manager: ErrorManager
+    error_manager: ParserErrorManager
 
-    def __init__(self, lexer: Lexer, error_manger: ErrorManager) -> None:
+    def __init__(self, lexer: Lexer, error_manger: ParserErrorManager) -> None:
         self.lexer = lexer
         self.error_manager = error_manger
         self.lexer.next_token()
 
     def _check_and_consume_token(self, expected_token: TokenType) -> bool:
         if self.lexer.token.token_type != expected_token:
-            self.error_manager.add_error(ErrorTypes.MISSING_TOKEN, expected_token)
+            self.error_manager.add_error(ErrorTypes.MISSING_TOKEN, expected_token, self.lexer.token.position)
             return False
         self.lexer.next_token()
         return True
@@ -67,7 +67,7 @@ class Parser:
 
         while function := self._parse_fun_declaration():
             if function.name in [function.name for function in functions]:
-                self.error_manager.add_error(ErrorTypes.EXIST_FUNCTION, function.name)
+                self.error_manager.add_error(ErrorTypes.EXIST_FUNCTION, function.name, self.lexer.token.position)
             else:
                 functions.append(function)
 
@@ -84,7 +84,7 @@ class Parser:
             self.lexer.next_token()
 
         if self.lexer.token.token_type != TokenType.IDENTIFIER:
-            self.error_manager.add_error(ErrorTypes.MISSING_IDENTIFIER, self.lexer.token)
+            self.error_manager.add_error(ErrorTypes.MISSING_IDENTIFIER, self.lexer.token, self.lexer.token.position)
         name = self.lexer.token.value
 
         self.lexer.next_token()
@@ -118,9 +118,9 @@ class Parser:
             self.lexer.next_token()
             argument_dec = self._parse_argument_dec()
             if argument_dec is None:
-                self.error_manager.add_error(ErrorTypes.MISSING_ARGUMENT, self.lexer.token)
+                self.error_manager.add_error(ErrorTypes.MISSING_ARGUMENT, self.lexer.token, self.lexer.token.position)
             elif argument_dec in argument_list:
-                self.error_manager.add_error(ErrorTypes.EXIST_ARGUMENT, self.lexer.token)
+                self.error_manager.add_error(ErrorTypes.EXIST_ARGUMENT, self.lexer.token, self.lexer.token.position)
             else:
                 argument_list.append(argument_dec)
         return argument_list
@@ -133,7 +133,7 @@ class Parser:
 
         self.lexer.next_token()
         if self.lexer.token.token_type != TokenType.IDENTIFIER:
-            self.error_manager.add_error(ErrorTypes.MISSING_IDENTIFIER, self.lexer.token)
+            self.error_manager.add_error(ErrorTypes.MISSING_IDENTIFIER, self.lexer.token, self.lexer.token.position)
             return None
         identifier = self.lexer.token.value
         self.lexer.next_token()
@@ -173,6 +173,9 @@ class Parser:
 
         condition = self._parse_logical_expression()
 
+        if condition is None:
+            self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
+
         self._check_and_consume_token(TokenType.STOP_ROUND)
 
         block = self._parse_block()
@@ -194,6 +197,9 @@ class Parser:
 
         condition = self._parse_logical_expression()
 
+        if condition is None:
+            self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
+
         self._check_and_consume_token(TokenType.STOP_ROUND)
 
         block = self._parse_block()
@@ -210,10 +216,15 @@ class Parser:
 
         argument_dec = self._parse_argument_dec()
 
+        if argument_dec is None:
+            self.error_manager.add_error(ErrorTypes.MISSING_ARGUMENT, self.lexer.token, self.lexer.token.position)
+
         self._check_and_consume_token(TokenType.COLON)
 
-        self.lexer.next_token()
         expression = self._parse_logical_expression()
+
+        if expression is None:
+            self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
 
         self._check_and_consume_token(TokenType.STOP_ROUND)
 
@@ -259,7 +270,8 @@ class Parser:
             self.lexer.next_token()
             expression = self._parse_logical_expression()
 
-        self._check_and_consume_token(TokenType.SEMICOLON)
+        if id_or_exp is not None:
+            self._check_and_consume_token(TokenType.SEMICOLON)
 
         if assignment:
             return AssignmentExpression(self.lexer.token.position, id_or_exp, expression)
@@ -280,7 +292,7 @@ class Parser:
             self.lexer.next_token()
             expression = self._parse_logical_expression()
             if expression is None:
-                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token)
+                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
             else:
                 expression_list.append(expression)
         return expression_list
@@ -298,7 +310,7 @@ class Parser:
 
         self.lexer.next_token()
         if self.lexer.token.token_type != TokenType.IDENTIFIER:
-            self.error_manager.add_error(ErrorTypes.MISSING_IDENTIFIER, self.lexer.token)
+            self.error_manager.add_error(ErrorTypes.MISSING_IDENTIFIER, self.lexer.token, self.lexer.token.position)
             return None
         identifier = self.lexer.token.value
         self.lexer.next_token()
@@ -364,9 +376,9 @@ class Parser:
             self.lexer.next_token()
             expression = self._parse_logical_expression()
             if expression is None:
-                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token)
+                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
                 return None
-            return LogicalExpression(self.lexer.token.position, expression)
+            return NegatedExpression(self.lexer.token.position, expression)
         return self._parse_or_expression()
 
     # or_expression = and_expression, {or_operator, and_expression};
@@ -380,7 +392,7 @@ class Parser:
             self.lexer.next_token()
             right = self._parse_and_expression()
             if right is None:
-                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token)
+                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
                 return None
             left = OrExpression(self.lexer.token.position, left, operator, right)
         return left
@@ -396,7 +408,7 @@ class Parser:
             self.lexer.next_token()
             right = self._parse_relative_expression()
             if right is None:
-                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token)
+                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
                 return None
             left = AndExpression(self.lexer.token.position, left, operator, right)
         return left
@@ -412,7 +424,7 @@ class Parser:
             self.lexer.next_token()
             right = self._parse_sum_expression()
             if right is None:
-                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token)
+                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
                 return None
             left = RelativeExpression(self.lexer.token.position, left, operator, right)
         return left
@@ -428,7 +440,7 @@ class Parser:
             self.lexer.next_token()
             right = self._parse_mul_expression()
             if right is None:
-                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token)
+                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
                 return None
             left = SumExpression(self.lexer.token.position, left, operator, right)
         return left
@@ -444,7 +456,7 @@ class Parser:
             self.lexer.next_token()
             right = self._parse_negated()
             if right is None:
-                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token)
+                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
                 return None
             left = MulExpression(self.lexer.token.position, left, operator, right)
         return left
@@ -458,7 +470,7 @@ class Parser:
 
         expression = self._parse_factor()
         if negated and expression is None:
-            self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token)
+            self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
             return None
 
         if negated:
@@ -474,7 +486,6 @@ class Parser:
         if expression is not None:
             return expression
 
-        self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token)
         return None
 
     def _parse_literal(self) -> Expression:

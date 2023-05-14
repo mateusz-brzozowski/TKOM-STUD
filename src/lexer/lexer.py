@@ -2,7 +2,7 @@ from io import TextIOBase
 from typing import Union
 
 from lexer.token_manager import Token, TokenType
-from error.error_manager import ErrorManager, ErrorTypes
+from error.error_manager import LexerErrorManager, ErrorTypes
 from utility.utility import (
     Position,
     EOF_CHARS,
@@ -18,7 +18,7 @@ from utility.utility import (
 
 class Lexer:
     stream: TextIOBase
-    error_manager: ErrorManager
+    error_manager: LexerErrorManager
     character: str
     position: Position = Position(1, 0)
     token_position: Position = Position(1, 0)
@@ -26,7 +26,7 @@ class Lexer:
     new_line_char: str = None
 
     def __init__(
-        self, stream: TextIOBase, error_manager: ErrorManager
+        self, stream: TextIOBase, error_manager: LexerErrorManager
     ) -> None:
         self.stream = stream
         self.error_manager = error_manager

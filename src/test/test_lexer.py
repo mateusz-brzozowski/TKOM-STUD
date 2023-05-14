@@ -3,7 +3,7 @@ import io
 
 from src.lexer.lexer import Lexer
 from src.lexer.token_manager import TokenType
-from src.error.error_manager import ErrorManager, ErrorTypes
+from src.error.error_manager import LexerErrorManager, ErrorTypes
 
 TestCorrectTokensData = [
     ("1", TokenType.INTEGER_VALUE.name),
@@ -36,7 +36,7 @@ TestCorrectTokensData = [
 @pytest.mark.parametrize("stream,expected", TestCorrectTokensData)
 def test_token_type(stream, expected):
     with io.StringIO(stream) as stream:
-        lexer = Lexer(stream, ErrorManager())
+        lexer = Lexer(stream, LexerErrorManager())
         lexer.next_token()
         assert lexer.token.token_type.name is expected
 
@@ -55,7 +55,8 @@ TestUndefinedTokensData = [
 @pytest.mark.parametrize("stream", TestUndefinedTokensData)
 def test_Undefined_token(stream):
     with io.StringIO(stream) as stream:
-        lexer = Lexer(stream, ErrorManager())
+        lexer = Lexer(stream, LexerErrorManager())
+        lexer.error_manager.errors = []
         lexer.next_token()
         assert lexer.token.token_type.name is TokenType.UNDEFINED.name
 
@@ -80,7 +81,8 @@ TestErrorsData = [
 @pytest.mark.parametrize("stream,expected", TestErrorsData)
 def test_error_types(stream, expected):
     with io.StringIO(stream) as stream:
-        lexer = Lexer(stream, ErrorManager())
+        lexer = Lexer(stream, LexerErrorManager())
+        lexer.error_manager.errors = []
         while lexer.next_token().token_type.name != TokenType.UNDEFINED.name:
             pass
         assert lexer.error_manager.errors[0][0].name == expected

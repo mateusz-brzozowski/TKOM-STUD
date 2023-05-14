@@ -2,10 +2,8 @@ import pytest
 import io
 
 from src.lexer.lexer import Lexer
-from src.error.error_manager import ErrorManager
+from src.error.error_manager import LexerErrorManager, ParserErrorManager
 from src.parser.parser import Parser
-from src.parser.objects.program import Program
-from src.parser.objects.function import Function
 from src.parser.objects.block import Block
 from src.parser.objects.statement import (
     CommentStatement,
@@ -22,13 +20,14 @@ from src.parser.objects.type import (
 from src.parser.objects.expression import (
     IntegerExpression, DecimalExpression, StringExpression, BooleanExpression,
     IdentifierExpression, OrExpression, AndExpression, RelativeExpression,
-    SumExpression, MulExpression, NegatedExpression, LogicalExpression,
-    CallExpression, CastExpression, AssignmentExpression
+    SumExpression, MulExpression, NegatedExpression,
+    CallExpression, CastExpression, AssignmentExpression, RelativeExpression
 )
+from src.error.error_manager import ErrorTypes
 from src.utility.utility import Position
 
 
-CorrectSourceCode = [
+OneStatement = [
     ("#comment", CommentStatement(Position(2, 11), "comment")),
     ("int x;", DeclarationStatement(Position(2, 9), (Int(), "x"), None)),
     ("dec x;", DeclarationStatement(Position(2, 9), (Dec(), "x"), None)),
@@ -90,15 +89,137 @@ CorrectSourceCode = [
     ( """ if (True) {
     }
     """, IfStatement(Position(2, 26), BooleanExpression(Position(2, 10), True), Block([]), None)),
-]
-
-@pytest.mark.parametrize("stream,expected", CorrectSourceCode)
-def test_token_type(stream, expected):
+    ( """ if ( x > 0 ) {
+        }
+    """, IfStatement(Position(2, 33), RelativeExpression(Position(2, 13), IdentifierExpression(Position(2, 9), "x"), ">", IntegerExpression(Position(2, 13), 0)), Block([]), None)),
+    ( """ if ( x + y > 0 ) {
+        }
+    """, IfStatement(Position(2, 37), RelativeExpression(Position(2, 17), SumExpression(Position(2, 13), IdentifierExpression(Position(2, 9), "x"), "+", IdentifierExpression(Position(2, 13), "y")), ">", IntegerExpression(Position(2, 17), 0)), Block([]), None)),
+    ( """ while ( x.getx() != True){
+        }
+    """, WhileStatement(Position(2, 45), RelativeExpression(Position(2, 26), CallExpression(Position(2, 20), "getx", [], IdentifierExpression(Position(2, 11), "x")), "!=", BooleanExpression(Position(2, 26), True)), Block([]))),
+    ( """ for( Trapeze t : trapezes) {
+        }
+    """, IterateStatement(Position(2, 47), (Trapeze(), "t"), IdentifierExpression(Position(2, 27), "trapezes"), Block([]))),
+    ( """ for( int i : x.getx()){
+        }
+    """, IterateStatement(Position(2, 42), (Int(), "i"), CallExpression(Position(2, 23), "getx", [], IdentifierExpression(Position(2, 16), "x")), Block([]))),
+    ( """ if ( x or not ( z > 0 and x < 0 ) ) {
+        }
+    """, IfStatement(Position(2, 56), OrExpression(Position(2, 36), IdentifierExpression(Position(2, 10), "x"), "or", NegatedExpression(Position(2, 36), AndExpression(Position(2, 34), RelativeExpression(Position(2, 26), IdentifierExpression(Position(2, 20), "z"), ">", IntegerExpression(Position(2, 26), 0)), "and", RelativeExpression(Position(2, 34), IdentifierExpression(Position(2, 30), "x"), "<", IntegerExpression(Position(2, 34), 0))))), Block([]), None)),
+    ]
+@pytest.mark.parametrize("stream,expected", OneStatement)
+def test_one_statement(stream, expected):
     main_stream = "def main() { \n" + stream + "\n }"
     with io.StringIO(main_stream) as stream_input:
-        lexer = Lexer(stream_input, ErrorManager())
+        lexer = Lexer(stream_input, LexerErrorManager())
         lexer.position = Position(1, 1)
-        parser = Parser(lexer, ErrorManager())
+        parser = Parser(lexer, ParserErrorManager())
         output = parser.parse_program()
         output_class = output.objects[0].block.statements[0]
         assert str(output_class) == str(expected)
+
+MultiStatement = [
+    ( """
+    x = 1;
+    y = 2;
+    """, [AssignmentExpression(Position(2, 16), IdentifierExpression(Position(2, 7), "x"), IntegerExpression(Position(2, 10), 1)), AssignmentExpression(Position(2, 29), IdentifierExpression(Position(2, 18), "y"), IntegerExpression(Position(2, 21), 2))]),
+]
+
+@pytest.mark.parametrize("stream,expected", MultiStatement)
+def test_multi_statement(stream, expected):
+    main_stream = "def main() { \n" + stream + "\n }"
+    with io.StringIO(main_stream) as stream_input:
+        lexer = Lexer(stream_input, LexerErrorManager())
+        lexer.position = Position(1, 1)
+        parser = Parser(lexer, ParserErrorManager())
+        output = parser.parse_program()
+        output_string = ""
+        for statement in output.objects[0].block.statements:
+            output_string += str(statement)
+        expected_string = ""
+        for statement in expected:
+            expected_string += str(statement)
+        assert output_string == expected_string
+
+
+InvalidInput = [
+    ("""
+     x = 1
+    """, ErrorTypes.MISSING_TOKEN.name),
+    ("""
+     x = 1;
+     y = 2
+     """ , ErrorTypes.MISSING_TOKEN.name),
+    ("""
+    if ( {
+        int x = 1;
+    }
+     """ , ErrorTypes.MISSING_EXPRESSION.name),
+    ("""
+    if ( x > 1 {
+        int x = 1;
+    }
+     """ , ErrorTypes.MISSING_TOKEN.name),
+    ("""
+    while (x > 1){
+        int x = 1;
+
+     """ , ErrorTypes.MISSING_TOKEN.name),
+    ("""
+    while (x > 1){
+        int x = 1 0
+
+     """ , ErrorTypes.MISSING_TOKEN.name),
+]
+
+@pytest.mark.parametrize("stream,expected", InvalidInput)
+def test_errors_statement(stream, expected):
+    main_stream = "def main() { \n" + stream + "\n }"
+    with io.StringIO(main_stream) as stream_input:
+        lexer = Lexer(stream_input, LexerErrorManager())
+        lexer.position = Position(1, 1)
+        parser = Parser(lexer, ParserErrorManager())
+        parser.error_manager.errors = []
+        parser.parse_program()
+        assert parser.error_manager.errors[0][0].name == expected
+
+
+def test_function_exists_statement():
+    main_stream = """def main() { }
+    def main() { }
+    """
+    with io.StringIO(main_stream) as stream_input:
+        lexer = Lexer(stream_input, LexerErrorManager())
+        lexer.position = Position(1, 1)
+        parser = Parser(lexer, ParserErrorManager())
+        parser.error_manager.errors = []
+        parser.parse_program()
+        assert parser.error_manager.errors[0][0].name == ErrorTypes.EXIST_FUNCTION.name
+
+
+
+def test_argument_exists_statement():
+    main_stream = """def main(int x, int x) { }
+    def main() { }
+    """
+    with io.StringIO(main_stream) as stream_input:
+        lexer = Lexer(stream_input, LexerErrorManager())
+        lexer.position = Position(1, 1)
+        parser = Parser(lexer, ParserErrorManager())
+        parser.error_manager.errors = []
+        parser.parse_program()
+        assert parser.error_manager.errors[0][0].name == ErrorTypes.EXIST_ARGUMENT.name
+
+
+def test_missing_argument_identifier_statement():
+    main_stream = """def main(int x, int) { }
+    def main() { }
+    """
+    with io.StringIO(main_stream) as stream_input:
+        lexer = Lexer(stream_input, LexerErrorManager())
+        lexer.position = Position(1, 1)
+        parser = Parser(lexer, ParserErrorManager())
+        parser.error_manager.errors = []
+        parser.parse_program()
+        assert parser.error_manager.errors[0][0].name == ErrorTypes.MISSING_IDENTIFIER.name
