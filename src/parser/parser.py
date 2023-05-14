@@ -213,7 +213,7 @@ class Parser:
         self._check_and_consume_token(TokenType.COLON)
 
         self.lexer.next_token()
-        expression = self._parse_expression()
+        expression = self._parse_logical_expression()
 
         self._check_and_consume_token(TokenType.STOP_ROUND)
 
@@ -227,7 +227,7 @@ class Parser:
             return None
 
         self.lexer.next_token()
-        expression = self._parse_expression()
+        expression = self._parse_logical_expression()
 
         self._check_and_consume_token(TokenType.SEMICOLON)
 
@@ -417,7 +417,7 @@ class Parser:
             left = RelativeExpression(self.lexer.token.position, left, operator, right)
         return left
 
-    # sum_expression = mul_expression, {sumtract_operator, mul_expression};
+    # sum_expression = mul_expression, {sum_operator, mul_expression};
     def _parse_sum_expression(self) -> Expression:
         left = self._parse_mul_expression()
         if left is None:
