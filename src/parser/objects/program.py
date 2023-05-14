@@ -1,5 +1,7 @@
+from parser.objects.function import Function
+
 class Program:
-    objects: None
+    objects: list[Function]
 
     def __init__(self, objects) -> None:
         self.objects = objects
