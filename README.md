@@ -5,124 +5,6 @@ Wariant: `Język statycznie typowany z silnym typowaniem`
 
 Język programowania: `Python`
 
-# przykłady wykorzystania języka
-
-- definiowanie typów
-```c++
-def main() {
-    int a = 2;
-    int b = a;
-    dec c = 2.95;
-    bool d = False;
-
-    String string = "Hello World!";
-    dec negative = -1.5;
-
-    int x = a * (b + (int) c);
-}
-```
-
-- wyznaczanie pola, obwodu, przekątnej, przesuwanie o wektor figury
-```c++
-def main() {
-    Triangle t = Triangle(0, 0, 3, 4, 55);
-    print(t.area());
-
-    Rectangle r = Rectangle(0, 0, 5);
-    print(r.perimeter());
-
-    Square s = Square(0, 0, 5);
-    print(s.diagonal());
-
-    s.move(2, 3);
-}
-```
-- dodawanie/usuwanie figur do/z kolekcji i wyświetlanie ich
-```c++
-def main(){
-    Canvas c = Canvas();
-    Circle circle = Circle(0, 0, 6);
-    Polygon p = Polygon(10, 20, 5, 6);
-    Rhomb r = Rhomb(6, 20, 4, 60);
-    Trapeze t = Trapeze(8, 9, 6, 8, 60, 90);
-    c.push(circle);
-    c.push(p);
-    c.push(r);
-    c.push(t);
-    c.pop();
-    c.display();
-}
-```
-- pętle, instrukcje warunkowe i iterowanie po kolekcji
-```c++
-def main(){
-    Rectangle r = Rectangle(0, 0, 5);
-    dec r_per = r.perimeter();
-
-    Square s = Square(0, 0, 5);
-    dec s_per = s.perimeter();
-
-    dec suma = 0;
-
-    if ( s.area() != 2.5 or r_per == 2) {
-        print(s.diagonal());
-    }
-
-    if (r_per > s_per) {
-        print("Prostokąt większy");
-    } else {
-        suma = r_per + s_per;
-        print(suma);
-    }
-
-    int i = 0;
-    Canvas c = Canvas();
-    while ( i <= 20 ) {
-        c.add(Cricle(i, i, i));
-        i = i - 1;
-    }
-
-    for ( Shape shape : c) {
-        shape.move(3, 10);
-    }
-
-    c.display();
-}
-```
-- definiowanie funkcji i rekursywne wywołanie
-```c++
-def Square gasket(int x, int y, dec dim, Canvas c){
-    if ( dim < 8) {
-        return Square(x, y, dim);
-    } else {
-        dec = new_dim = dim / 2;
-        gasket(x, y, new_dim);
-        gasket(x + new_dim, y, new_dim);
-        gasket(x + new_dim, y + new_dim, new_dim);
-    }
-
-}
-
-def Triangle getTriangle(int x, int y, int height, int width){
-    return Triangle(x, y, width / 2, height, 90);
-}
-
-def printInformation(Shape shape){
-    # pole
-    print(shape.area());
-    # obwód
-    print(shape.perimeter());
-}
-
-def main(){
-    Canvas c = Canvas();
-    c.add(gasket(0,0, 248));
-    c.display();
-    Triangle t = getTriangle(0, 10, 20, 30);
-
-    printInformation(t);
-}
-```
 # Opis funkcjonalności
 
 Język do opisu figur geometrycznych i ich właściwości umożliwia opisanie i obliczanie charakterystycznych wielkości dla różnych typów figur geometrycznych.
@@ -194,6 +76,9 @@ Założenia dotyczące programu:
 
 1. Język powinien działać na różnych platformach i systemach operacyjnych takich jak Windows, Linux i macOS
 2. Język powinien być dobrze udokumentowany, wszystkie jego funkcjonaliści i sposób korzystania będzie opisany w dokumentacji
+3. Język działa w sposób deterministyczny, zawsze zwraca te same wyniki
+4. Zapewniamy bezpieczeństwo na poziomie, czytania kodu znak po znaku, ustawiając odpowiednie limity na zmiennych
+
 
 # Semantyka
 
@@ -205,25 +90,25 @@ Założenia dotyczące programu:
 - złożone
     - `String` - ciąg znaków
     - `Shape` - figura, jest to typ nadrzędny, dla pozostałych figur
-    - `Circle(value, value, value)` - koło
+    - `Circle(x, y, value)` - koło
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy promień koła, promień może być typu int lub float z wartością dodatnią.
-    - `Square(value, value, value)` - kwadrat
+    - `Square(x, y, a)` - kwadrat
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy bok kwadratu, bok może być typu int lub float z wartością dodatnią.
-    - `Rectangle(value, value, value, value)` - prostokąt
+    - `Rectangle(x, y, a, b)` - prostokąt
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy boki kwadratu, boki mogą być typu int lub float z wartością dodatnią
-    - `Triangle(value, value, value, value, value)` - trójkąt
+    - `Triangle(x, y, a, b, alfa)` - trójkąt
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy dwa boki trójkąta i kąt pomiędzy nimi, boki mogą być typu int lub float z wartością dodatnią, natomiast kąt jest typu int z zakresu od 0 do 180.
-    - `Rhomb(value, value, value, value, value)` - romb
+    - `Rhomb(x, y, a, b, alfa)` - romb
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy bok rombu i kąt pomiędzy nimi, bok może być typu int lub float z wartością dodatnią, natomiast kąt jest typu int z zakresu od 0 do 180.
-    - `Trapeze(value, value, value, value, value, value)` - trapez
+    - `Trapeze(x, y, a, b, alfa, beta)` - trapez
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy dwie podstawy trapezu i kąty przy dłuższej podstawie, boki mogą być typu int lub float z wartością dodatnią, natomiast kąty są typu int z zakresu od 0 do 90.
-    - `Polygon(value, value, value, value)` - wielokąt foremny
+    - `Polygon(x, y, a, n)` - wielokąt foremny
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy bok i ilość boków, bok może być typu int lub float z wartością dodatnią, natomiast ilość boków może być typu int o wartości co najmniej 3.
     - `Canvas` - kolekcja figur
@@ -303,65 +188,70 @@ print(t.area());
 # Tokeny
 
 ```py
-ADD :  "+",
-SUBTRACT : "-",
-MULTIPLY : "*",
-DIVIDE : "/",
+ADD = "+"
+SUBTRACT = "-"
+MULTIPLY = "*"
+DIVIDE = "/"
 
-AND : "and",
-OR : "or",
-NOT : "not",
+ASSIGN = "="
 
-EQUAL : "==",
-NOT_EQUAL : "!=",
-GREATER : ">",
-LESS : "<",
-GREATER_EQUAL : ">=",
-LESS_EQUAL : "<=",
+AND = "and"
+OR = "or"
+NOT = "not"
 
-COMMENT : "#",
+EQUAL = "=="
+NOT_EQUAL = "!="
+GREATER = ">"
+LESS = "<"
+GREATER_EQUAL = ">="
+LESS_EQUAL = "<="
 
-INTEGER : "int",
-DECIMAL : "dec",
-BOOL : "bool",
+COMMENT = "#"
 
-BOOL_TRUE : "True",
-BOOL_FALSE : "False",
+INTEGER = "int"
+DECIMAL = "dec"
+BOOL = "bool"
 
-String : "String",
+BOOL_TRUE = "True"
+BOOL_FALSE = "False"
 
-STRING_QUOTE : "\"",
+STRING = "String"
+STRING_QUOTE = "\""
 
-Shape : "Shape",
-Circle : "Circle",
-Square : "Square",
-Rectangle : "Rectangle",
-Triangle : "Triangle",
-Rhomb : "Rhomb",
-Trapeze : "Trapeze",
-Polygon : "Polygon",
-Canvas : "Canvas",
+SHAPE = "Shape"
+CIRCLE = "Circle"
+SQUARE = "Square"
+RECTANGLE = "Rectangle"
+TRIANGLE = "Triangle"
+RHOMB = "Rhomb"
+TRAPEZE = "Trapeze"
+POLYGON = "Polygon"
+CANVAS = "Canvas"
 
-SEMICOLON : ";",
-COLON : ":",
-COMMA : ",",
-DOT : ".",
+SEMICOLON = ";"
+COLON = ":"
+COMMA = ","
+DOT = "."
 
-FUNCTION : "def",
-RETURN : "return",
+FUNCTION = "def"
+RETURN = "return"
 
-START_CURLY : "{",
-STOP_CURLY : "}",
-START_ROUND : "(",
-STOP_ROUND : ")",
-START_SQUARE : "[",
-STOP_SQUARE : "]",
+START_CURLY = "{"
+STOP_CURLY = "}"
+START_ROUND = "("
+STOP_ROUND = ")"
+START_SQUARE = "["
+STOP_SQUARE = "]"
 
-IF : "if",
-ELSE : "else",
+IF = "if"
+ELSE = "else"
 
-WHILE : "while",
-FOR : "for",
+WHILE = "while"
+FOR = "for"
+
+UNDEFINED = "undefined"
+IDENTIFIER = "identifier"
+EOF = "eof"
 ```
 
 # Gramatyka
@@ -387,10 +277,9 @@ declaration         = type, identifier, ['=', expression], ';';
 assignment          = identifier, '=', expression, ';';
 block               = '{',  {statement}, '}';
 statement           = assignment | if_statement | while_statement
-                    | iterate_statement | declaration | expression, ';';
-
-expression          = identifier | sub_expression | logical_expression
-                    | function_call | method_call | '(', expression, ')';
+                    | iterate_statement | declaration
+                    | identifier | sub_expression | logical_expression
+                    | function_call | method_call | '(', statement, ')', ';';
 
 logical_expression  = or_expression | "not" logical_expression;
 or_expression       = and_expression, {or_operator, and_expression};
@@ -399,7 +288,7 @@ and_expression      = relative_expression,
 relative_expression = sub_expression, {relative_operator, sub_expression};
 sub_expression      = mul_expression, {subtract_operator, mul_expression};
 mul_expression      = factor, {multiply_operator, factor};
-factor              = ["-"], number | identifier | string
+factor              = ["-" | "not"], number | identifier | string
                     | function_call | method_call
                     | cast | '(', logical_expression, ')';
 
@@ -419,7 +308,7 @@ complex_type        = "Shape" | "Circle" | "Square"
 identifier          = letter, {letter | digit};
 
 string              = '"', {chars}, '"';
-comment             = '#', {chars}, '\n';
+comment             = '#', {chars}, '\n' | '\r' | '\n\r' | '\n\n';
 chars               = letter | digit;
 
 number              = integer | decimal;
@@ -430,7 +319,7 @@ bool                = "True" | "False";
 digit               = zero | not_zero_digit;
 not_zero_digit      = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 zero                = '0';
-letter              = #'[a-z]' | #'[A-Z]' ;
+letter              = #'[a-z]' | #'[A-Z]' (*inne znaki specjalne*);
 ```
 
 # Obsługa błędów:
@@ -629,6 +518,125 @@ Error [4, 14]: Invalid return type, expected non-return type
 - Analizator składniowy - Sprawdza, czy sekwencja tokenów odpowiada zdefiniowanemu w gramatyce języka programowania i tworzy z nich drzewo składniowe.
 
 - Analizator semantyczny - Wykonuje analizę semantyczną na drzewie składniowym, sprawdzając poprawność wykorzystania zmiennych, typów danych i wyrażeń.
+
+# przykłady wykorzystania języka
+
+- definiowanie typów
+```c++
+def main() {
+    int a = 2;
+    int b = a;
+    dec c = 2.95;
+    bool d = False;
+
+    String string = "Hello World!";
+    dec negative = -1.5;
+
+    int x = a * (b + (int) c);
+}
+```
+
+- wyznaczanie pola, obwodu, przekątnej, przesuwanie o wektor figury
+```c++
+def main() {
+    Triangle t = Triangle(0, 0, 3, 4, 55);
+    print(t.area());
+
+    Rectangle r = Rectangle(0, 0, 5);
+    print(r.perimeter());
+
+    Square s = Square(0, 0, 5);
+    print(s.diagonal());
+
+    s.move(2, 3);
+}
+```
+- dodawanie/usuwanie figur do/z kolekcji i wyświetlanie ich
+```c++
+def main(){
+    Canvas c = Canvas();
+    Circle circle = Circle(0, 0, 6);
+    Polygon p = Polygon(10, 20, 5, 6);
+    Rhomb r = Rhomb(6, 20, 4, 60);
+    Trapeze t = Trapeze(8, 9, 6, 8, 60, 90);
+    c.push(circle);
+    c.push(p);
+    c.push(r);
+    c.push(t);
+    c.pop();
+    c.display();
+}
+```
+- pętle, instrukcje warunkowe i iterowanie po kolekcji
+```c++
+def main(){
+    Rectangle r = Rectangle(0, 0, 5);
+    dec r_per = r.perimeter();
+
+    Square s = Square(0, 0, 5);
+    dec s_per = s.perimeter();
+
+    dec suma = 0;
+
+    if ( s.area() != 2.5 or r_per == 2) {
+        print(s.diagonal());
+    }
+
+    if (r_per > s_per) {
+        print("Prostokąt większy");
+    } else {
+        suma = r_per + s_per;
+        print(suma);
+    }
+
+    int i = 0;
+    Canvas c = Canvas();
+    while ( i <= 20 ) {
+        c.add(Cricle(i, i, i));
+        i = i - 1;
+    }
+
+    for ( Shape shape : c) {
+        shape.move(3, 10);
+    }
+
+    c.display();
+}
+```
+- definiowanie funkcji i rekursywne wywołanie
+```c++
+def Square gasket(int x, int y, dec dim, Canvas c){
+    if ( dim < 8) {
+        return Square(x, y, dim);
+    } else {
+        dec = new_dim = dim / 2;
+        gasket(x, y, new_dim);
+        gasket(x + new_dim, y, new_dim);
+        gasket(x + new_dim, y + new_dim, new_dim);
+    }
+
+}
+
+def Triangle getTriangle(int x, int y, int height, int width){
+    return Triangle(x, y, width / 2, height, 90);
+}
+
+def printInformation(Shape shape){
+    # pole
+    print(shape.area());
+    # obwód
+    print(shape.perimeter());
+}
+
+def main(){
+    Canvas c = Canvas();
+    c.add(gasket(0,0, 248));
+    c.display();
+    Triangle t = getTriangle(0, 10, 20, 30);
+
+    printInformation(t);
+}
+```
 
 
 # Autor
