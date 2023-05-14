@@ -117,6 +117,7 @@ UNARY_OPERATORS: list[TokenType] = [
     TokenType.SUBTRACT,
 ]
 
+
 class Position:
     line: int
     column: int

@@ -34,6 +34,10 @@ class Lexer:
         self.token = Token(TokenType.UNDEFINED, "", self.token_position)
 
     def _check_eof(self) -> bool:
+        if self.new_line_char:
+            if self.character == self.new_line_char:
+                self._next_char()
+                return True
         if self.character not in EOF_TYPES:
             return False
         eof_char = self.character
@@ -161,13 +165,13 @@ class Lexer:
                     )
                     return True
             self.token = Token(
-                TokenType.DECIMAL,
+                TokenType.DECIMAL_VALUE,
                 value + fraction / (10 ** number_of_digits),
                 self.token_position
             )
             return True
 
-        self.token = Token(TokenType.INTEGER, value, self.token_position)
+        self.token = Token(TokenType.INTEGER_VALUE, value, self.token_position)
         return True
 
     def _try_build_comment_token(self) -> bool:
@@ -201,7 +205,7 @@ class Lexer:
             number_of_chars += 1
 
         self._next_char()
-        self.token = Token(TokenType.STRING, value, self.token_position)
+        self.token = Token(TokenType.STRING_VALUE, value, self.token_position)
         return True
 
     def _next_char(self) -> str:

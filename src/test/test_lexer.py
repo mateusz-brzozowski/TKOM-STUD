@@ -6,16 +6,16 @@ from src.lexer.token_manager import TokenType
 from src.error.error_manager import ErrorManager, ErrorTypes
 
 TestCorrectTokensData = [
-    ("1", TokenType.INTEGER.name),
-    ("1.1", TokenType.DECIMAL.name),
-    ("0", TokenType.INTEGER.name),
-    ("0.0", TokenType.DECIMAL.name),
-    ("0.00001", TokenType.DECIMAL.name),
+    ("1", TokenType.INTEGER_VALUE.name),
+    ("1.1", TokenType.DECIMAL_VALUE.name),
+    ("0", TokenType.INTEGER_VALUE.name),
+    ("0.0", TokenType.DECIMAL_VALUE.name),
+    ("0.00001", TokenType.DECIMAL_VALUE.name),
     ("True", TokenType.BOOL_TRUE.name),
     ("False", TokenType.BOOL_FALSE.name),
-    ("\"String\"", TokenType.STRING.name),
-    ("\"Str\ni\rn\tg\"", TokenType.STRING.name),
-    ('\"S😂😊tr\ni\rn\tg\"', TokenType.STRING.name),
+    ("\"String\"", TokenType.STRING_VALUE.name),
+    ("\"Str\ni\rn\tg\"", TokenType.STRING_VALUE.name),
+    ('\"S😂😊tr\ni\rn\tg\"', TokenType.STRING_VALUE.name),
     ("Shape", TokenType.SHAPE.name),
     ("+", TokenType.ADD.name),
     ("-", TokenType.SUBTRACT.name),
@@ -28,7 +28,8 @@ TestCorrectTokensData = [
     (">", TokenType.GREATER.name),
     (">=", TokenType.GREATER_EQUAL.name),
     ("#asd", TokenType.COMMENT.name),
-    ("main", TokenType.IDENTIFIER.name)
+    ("main", TokenType.IDENTIFIER.name),
+    ("int", TokenType.INTEGER.name),
 ]
 
 

@@ -31,6 +31,9 @@ class TokenType(Enum):
     DECIMAL = "dec"
     BOOL = "bool"
 
+    INTEGER_VALUE = "1"
+    DECIMAL_VALUE = "1.0"
+    STRING_VALUE = "\"string\""
     BOOL_TRUE = "True"
     BOOL_FALSE = "False"
 

@@ -44,6 +44,7 @@ from utility.utility import (
     UNARY_OPERATORS
 )
 
+
 class Parser:
     lexer: Lexer
     error_manager: ErrorManager
@@ -62,7 +63,7 @@ class Parser:
 
     # program = {fun_declaration};
     def parse_program(self) -> Program:
-        functions: list = []
+        functions: list[Function] = []
 
         while function := self._parse_fun_declaration():
             if function.name in [function.name for function in functions]:
@@ -98,12 +99,10 @@ class Parser:
 
         return Function(self.lexer.token.position, name, block, argument_list, declaration_type)
 
-
     def _parse_type(self) -> Type:
         if self.lexer.token.token_type in DECLARATION_TYPES:
             return DECLARATION_TYPES[self.lexer.token.token_type]
         return None
-
 
     # argument_list = argument_dec, {',', argument_dec};
     def _parse_argument_list(self) -> list:
@@ -126,7 +125,6 @@ class Parser:
                 argument_list.append(argument_dec)
         return argument_list
 
-
     # argument_dec = type, identifier;
     def _parse_argument_dec(self):
         declaration_type = self._parse_type()
@@ -140,7 +138,6 @@ class Parser:
         identifier = self.lexer.token.value
         self.lexer.next_token()
         return (declaration_type, identifier)
-
 
     # block = '{',  {statement}, '}';
     def _parse_block(self) -> Block:
@@ -166,7 +163,6 @@ class Parser:
             self._parse_comment()
         )
 
-
     # if_statement = "if", "(", logical_expression, ")", block, ["else", block] ;
     def _parse_if_statement(self) -> IfStatement:
         if self.lexer.token.token_type != TokenType.IF:
@@ -188,7 +184,6 @@ class Parser:
 
         return IfStatement(self.lexer.token.position, condition, block, else_block)
 
-
     # while_statement = "while", '(', logical_expression, ')', block;
     def _parse_while_statement(self) -> WhileStatement:
         if self.lexer.token.token_type != TokenType.WHILE:
@@ -204,7 +199,6 @@ class Parser:
         block = self._parse_block()
 
         return WhileStatement(self.lexer.token.position, condition, block)
-
 
     # iterate_statement = "for", '(', argument_dec, ':', expression, ')', block;
     def _parse_iterate_statement(self) -> IterateStatement:
@@ -227,7 +221,6 @@ class Parser:
 
         return IterateStatement(self.lexer.token.position, argument_dec, expression, block)
 
-
     # return_statement = "return", expression, ';';
     def _parse_return_statement(self) -> ReturnStatement:
         if self.lexer.token.token_type != TokenType.RETURN:
@@ -239,7 +232,6 @@ class Parser:
         self._check_and_consume_token(TokenType.SEMICOLON)
 
         return ReturnStatement(self.lexer.token.position, expression)
-
 
     # declaration = argument_dec, ['=', expression], ';';
     def _parse_declaration_statement(self) -> DeclarationStatement:
@@ -273,7 +265,6 @@ class Parser:
             return AssignmentExpression(self.lexer.token.position, id_or_exp, expression)
         else:
             return id_or_exp
-
 
     # expression_list = expression, {',', expression};
     def _parse_expression_list(self) -> list[Expression]:
@@ -324,7 +315,6 @@ class Parser:
             self._parse_cast_or_expression()
         )
 
-
     # id_or_fun_call = identifier | type, ['(', [expression_list], ')'];
     def _parse_id_or_fun_call(self) -> Expression:
         is_type = False
@@ -364,7 +354,7 @@ class Parser:
             expression = self._parse_logical_expression()
             return CastExpression(self.lexer.token.position, cast_type, expression)
 
-        expression = self._parse_expression()
+        expression = self._parse_logical_expression()
         self._check_and_consume_token(TokenType.STOP_ROUND)
         return expression
 
@@ -459,7 +449,6 @@ class Parser:
             left = MulExpression(self.lexer.token.position, left, operator, right)
         return left
 
-
     # factor = ["-" | "not"], (string | number | bool | expression)
     def _parse_negated(self) -> Expression:
         negated = False
@@ -489,17 +478,17 @@ class Parser:
         return None
 
     def _parse_literal(self) -> Expression:
-        if self.lexer.token.token_type == TokenType.INTEGER:
+        if self.lexer.token.token_type == TokenType.INTEGER_VALUE:
             position = self.lexer.position
             value = self.lexer.token.value
             self.lexer.next_token()
             return IntegerExpression(position, value)
-        if self.lexer.token.token_type == TokenType.DECIMAL:
+        if self.lexer.token.token_type == TokenType.DECIMAL_VALUE:
             position = self.lexer.position
             value = self.lexer.token.value
             self.lexer.next_token()
             return DecimalExpression(position, value)
-        elif self.lexer.token.token_type == TokenType.STRING:
+        elif self.lexer.token.token_type == TokenType.STRING_VALUE:
             position = self.lexer.position
             value = self.lexer.token.value
             self.lexer.next_token()
