@@ -1,10 +1,9 @@
 from __future__ import annotations
 from enum import Enum
-from typing import Union
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from lexer.utility import Position
+    from utility.utility import Position, VALUE_TYPE
 
 
 class TokenType(Enum):
@@ -32,6 +31,9 @@ class TokenType(Enum):
     DECIMAL = "dec"
     BOOL = "bool"
 
+    INTEGER_VALUE = "1"
+    DECIMAL_VALUE = "1.0"
+    STRING_VALUE = "\"string\""
     BOOL_TRUE = "True"
     BOOL_FALSE = "False"
 
@@ -76,13 +78,13 @@ class TokenType(Enum):
 
 class Token:
     token_type: TokenType
-    value: Union[str, int, float, bool]
+    value: VALUE_TYPE
     position: Position
 
     def __init__(
         self,
         token_type: TokenType,
-        value: Union[str, int, float, bool],
+        value: VALUE_TYPE,
         position: Position
     ) -> None:
         self.token_type = token_type

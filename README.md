@@ -261,25 +261,20 @@ argument_dec        = type, identifier;
 argument_list       = argument_dec, {',', argument_dec};
 fun_declaration     = "def", [type], identifier,
                     '(', [argument_list], ')', block;
+block               = '{',  {statement}, '}';
 
-function_call       = identifier, '(', [expression,
-                    {',', expression}], ')';
-method_call         = expression, '.', function_call;
-cast                = '(', ("int" | "dec"), ')', factor;
+statement           = if_statement | while_statement
+                    | iterate_statement | return_statement
+                    | declaration | expression;
 
-return_statement    = "return", expression, ';';
-if_statement        = "if", "(", expression, ")", block,
+if_statement        = "if", "(", logical_expression, ")", block,
                     ["else", block] ;
 while_statement     = "while", '(', logical_expression, ')', block;
-iterate_statement   = "for", '(', type, identifier, ':',
+iterate_statement   = "for", '(', argument_dec, ':',
                     expression, ')', block;
-declaration         = type, identifier, ['=', expression], ';';
-assignment          = identifier, '=', expression, ';';
-block               = '{',  {statement}, '}';
-statement           = assignment | if_statement | while_statement
-                    | iterate_statement | declaration
-                    | identifier | sub_expression | logical_expression
-                    | function_call | method_call | '(', statement, ')', ';';
+return_statement    = "return", expression, ';';
+declaration         = argument_dec, ['=', expression], ';';
+assignment_or_exp   = [identifier, '='], expression, ';';
 
 logical_expression  = or_expression | "not" logical_expression;
 or_expression       = and_expression, {or_operator, and_expression};
@@ -288,9 +283,15 @@ and_expression      = relative_expression,
 relative_expression = sub_expression, {relative_operator, sub_expression};
 sub_expression      = mul_expression, {subtract_operator, mul_expression};
 mul_expression      = factor, {multiply_operator, factor};
-factor              = ["-" | "not"], number | identifier | string
-                    | function_call | method_call
-                    | cast | '(', logical_expression, ')';
+factor              = ["-" | "not"], (string | number | bool | expression)
+
+expression          = expression_call
+expression_call     = simple_expression, ".", identifier, function_arg
+function_arg        = "(" [expression, {',', expression}] ")";
+simple_expression   = id_or_fun_call | cast_or_expression
+id_or_fun_call      = identifier | type, [function_arg];
+cast_or_expression  = "(", ("int" | "dec") |  expression, ")";
+
 
 subtract_operator   = '+' | '-';
 multiply_operator   = '*' | '/';
@@ -614,7 +615,6 @@ def Square gasket(int x, int y, dec dim, Canvas c){
         gasket(x + new_dim, y, new_dim);
         gasket(x + new_dim, y + new_dim, new_dim);
     }
-
 }
 
 def Triangle getTriangle(int x, int y, int height, int width){

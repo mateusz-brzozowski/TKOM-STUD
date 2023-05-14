@@ -1,0 +1,33 @@
+def main(){
+    Rectangle r = Rectangle(0, 0, 5);
+    dec r_per = r.perimeter();
+
+    Square s = Square(0, 0, 5);
+    dec s_per = s.perimeter();
+
+    dec suma = 0;
+
+    if ( s.area() != 2.5 or r_per == 2) {
+        print(s.diagonal());
+    }
+
+    if (r_per > s_per) {
+        print("Prostokąt większy");
+    } else {
+        suma = r_per + s_per;
+        print(suma);
+    }
+
+    int i = 0;
+    Canvas c = Canvas();
+    while ( i <= 20 ) {
+        c.add(Cricle(i, i, i));
+        i = i - 1;
+    }
+
+    for ( Shape shape : c) {
+        shape.move(3, 10);
+    }
+
+    c.display();
+}

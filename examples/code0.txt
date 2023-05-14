@@ -1,0 +1,11 @@
+def main() {
+    int a = 2;
+    int b = a;
+    dec c = 2.95;
+    bool d = False;
+
+    String string = "Hello World!";
+    dec negative = -1.5;
+
+    int x = a * (b + (int) c);
+}
