@@ -2,8 +2,8 @@ from io import TextIOBase
 from typing import Union
 
 from lexer.token_manager import Token, TokenType
-from lexer.error_manager import ErrorManager, ErrorTypes
-from lexer.utility import (
+from error.error_manager import ErrorManager, ErrorTypes
+from utility.utility import (
     Position,
     EOF_CHARS,
     MAX_INT,

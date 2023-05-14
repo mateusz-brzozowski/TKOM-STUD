@@ -3,7 +3,7 @@ import io
 
 from src.lexer.lexer import Lexer
 from src.lexer.token_manager import TokenType
-from src.lexer.error_manager import ErrorManager, ErrorTypes
+from src.error.error_manager import ErrorManager, ErrorTypes
 
 TestCorrectTokensData = [
     ("1", TokenType.INTEGER.name),
@@ -15,7 +15,7 @@ TestCorrectTokensData = [
     ("False", TokenType.BOOL_FALSE.name),
     ("\"String\"", TokenType.STRING.name),
     ("\"Str\ni\rn\tg\"", TokenType.STRING.name),
-    ("\"S😂😊tr\ni\rn\tg\"", TokenType.STRING.name),
+    ('\"S😂😊tr\ni\rn\tg\"', TokenType.STRING.name),
     ("Shape", TokenType.SHAPE.name),
     ("+", TokenType.ADD.name),
     ("-", TokenType.SUBTRACT.name),
