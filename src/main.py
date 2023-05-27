@@ -15,6 +15,7 @@ def main() -> None:
         visitor = Visitor()
         program = parser.parse_program()
         print(program)
+        print(parser.error_manager.print_errors())
 
 
 if __name__ == '__main__':

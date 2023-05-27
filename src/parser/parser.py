@@ -260,7 +260,7 @@ class Parser:
 
         return DeclarationStatement(self.lexer.token.position, argument_dec, expression)
 
-    # assignment_or_exp = [identifier, '='], expression, ';';
+    # assignment_or_exp = identifier, ['=', expression], ';';
     def _parse_assignment_or_exp(self) -> Expression:
         id_or_exp = self._parse_logical_expression()
 
@@ -314,6 +314,7 @@ class Parser:
             return None
         identifier = self.lexer.token.value
         self.lexer.next_token()
+        # wielokrotne odwołania x.x.x.getx()
 
         self._check_and_consume_token(TokenType.START_ROUND)
         expression_list = self._parse_expression_list()
@@ -372,6 +373,7 @@ class Parser:
 
     # logical_expression  = or_expression | "not" logical_expression;
     def _parse_logical_expression(self) -> Expression:
+        # pozbyć się not
         if self.lexer.token.token_type == TokenType.NOT:
             self.lexer.next_token()
             expression = self._parse_logical_expression()
@@ -461,7 +463,7 @@ class Parser:
             left = MulExpression(self.lexer.token.position, left, operator, right)
         return left
 
-    # factor = ["-" | "not"], (string | number | bool | expression)
+    # factor = ["-" | "not"], {literal_expression | expression}
     def _parse_negated(self) -> Expression:
         negated = False
         if self.lexer.token.token_type in UNARY_OPERATORS:
@@ -488,6 +490,7 @@ class Parser:
 
         return None
 
+    # literal_expression = integer_value | decimal_value | string_value | bool_value
     def _parse_literal(self) -> Expression:
         if self.lexer.token.token_type == TokenType.INTEGER_VALUE:
             position = self.lexer.position
@@ -514,6 +517,7 @@ class Parser:
     def _parse_comment(self) -> CommentStatement:
         if self.lexer.token.token_type == TokenType.COMMENT:
             value = self.lexer.token.value
+            # TODO: dodać warstwę pośrednią, która pomija komentarze
             self.lexer.next_token()
             return CommentStatement(self.lexer.token.position, value)
         return None

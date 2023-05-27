@@ -2,7 +2,6 @@ def Square gasket(int x, int y, dec dim, Canvas c){
     if ( dim < 8) {
         return Square(x, y, dim);
     } else {
-        dec = new_dim = dim / 2;
         gasket(x, y, new_dim);
         gasket(x + new_dim, y, new_dim);
         gasket(x + new_dim, y + new_dim, new_dim);

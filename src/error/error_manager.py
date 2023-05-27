@@ -22,6 +22,7 @@ class ErrorTypes(Enum):
     MISSING_ARGUMENT = "Missing argument, after comma:"
     MISSING_EXPRESSION = "Missing expression:"
     EXIST_FUNCTION = "Function already exists:"
+    # Dodać obiekty wyjątków
 
 
 class LexerErrorManager:
