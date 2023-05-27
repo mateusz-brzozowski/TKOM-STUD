@@ -365,16 +365,8 @@ class Parser:
         self._check_and_consume_token(TokenType.STOP_ROUND)
         return expression
 
-    # logical_expression  = or_expression | "not" logical_expression;
+    # logical_expression  = or_expression
     def _parse_logical_expression(self) -> Expression:
-        # pozbyć się not
-        if self.lexer.token.token_type == TokenType.NOT:
-            self.lexer.next_token()
-            expression = self._parse_logical_expression()
-            if expression is None:
-                self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
-                return None
-            return NegatedExpression(self.lexer.token.position, expression)
         return self._parse_or_expression()
 
     # or_expression = and_expression, {or_operator, and_expression};
