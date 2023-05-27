@@ -6,13 +6,13 @@ from src.error.error_manager import LexerErrorManager, ParserErrorManager
 from src.parser.parser import Parser
 from src.parser.objects.block import Block
 from src.parser.objects.statement import (
-    CommentStatement,
     DeclarationStatement,
     ReturnStatement,
     IfStatement,
     WhileStatement,
     IterateStatement,
-)
+    AssignmentStatement
+    )
 from src.parser.objects.type import (
     Int, Dec, String, Bool,
     Square, Circle, Rectangle, Triangle, Rhomb, Trapeze, Polygon, Canvas
@@ -21,14 +21,14 @@ from src.parser.objects.expression import (
     IntegerExpression, DecimalExpression, StringExpression, BooleanExpression,
     IdentifierExpression, OrExpression, AndExpression, RelativeExpression,
     SumExpression, MulExpression, NegatedExpression,
-    CallExpression, CastExpression, AssignmentExpression, RelativeExpression
+    CallExpression, CastExpression, RelativeExpression
 )
 from src.error.error_manager import ErrorTypes
 from src.utility.utility import Position
 
 
 OneStatement = [
-    ("#comment", CommentStatement(Position(2, 11), "comment")),
+    ("int i = 0; #comment", DeclarationStatement(Position(2, 19), (Int(), "i"), IntegerExpression(Position(2, 10), 0))),
     ("int x;", DeclarationStatement(Position(2, 9), (Int(), "x"), None)),
     ("dec x;", DeclarationStatement(Position(2, 9), (Dec(), "x"), None)),
     ("String x;", DeclarationStatement(Position(2, 12), (String(), "x"), None)),
@@ -79,13 +79,13 @@ OneStatement = [
     ("return x.getx();", ReturnStatement(Position(2, 19), CallExpression(Position(2, 16), "getx", [], IdentifierExpression(Position(2, 9), "x")))),
     ("return x + 1;", ReturnStatement(Position(2, 16), SumExpression(Position(2, 13), IdentifierExpression(Position(2, 10), "x"), "+", IntegerExpression(Position(2, 13), 1)))),
     ("return x + (int) 1.0;", ReturnStatement(Position(2, 24), SumExpression(Position(2, 21), IdentifierExpression(Position(2, 10), "x"), "+", CastExpression(Position(2, 21), Int(), DecimalExpression(Position(2, 21), 1.0))))),
-    ("i = i - 1;", AssignmentExpression(Position(2, 13), IdentifierExpression(Position(2, 3), "i"), SumExpression(Position(2, 10), IdentifierExpression(Position(2, 7), "i"), "-", IntegerExpression(Position(2, 10), 1)))),
-    ("i = i + 1;", AssignmentExpression(Position(2, 13), IdentifierExpression(Position(2, 3), "i"), SumExpression(Position(2, 10), IdentifierExpression(Position(2, 7), "i"), "+", IntegerExpression(Position(2, 10), 1)))),
-    ("i = i * 1;", AssignmentExpression(Position(2, 13), IdentifierExpression(Position(2, 3), "i"), MulExpression(Position(2, 10), IdentifierExpression(Position(2, 7), "i"), "*", IntegerExpression(Position(2, 10), 1)))),
-    ("i = i / 1;", AssignmentExpression(Position(2, 13), IdentifierExpression(Position(2, 3), "i"), MulExpression(Position(2, 10), IdentifierExpression(Position(2, 7), "i"), "/", IntegerExpression(Position(2, 10), 1)))),
-    ("i = x + y;", AssignmentExpression(Position(2, 13), IdentifierExpression(Position(2, 3), "i"), SumExpression(Position(2, 10), IdentifierExpression(Position(2, 7), "x"), "+", IdentifierExpression(Position(2, 10), "y")))),
-    ("i = (int) x", AssignmentExpression(Position(2, 14), IdentifierExpression(Position(2, 3), "i"), CastExpression(Position(2, 14), Int(), IdentifierExpression(Position(2, 14), "x")))),
-    ("i = x.getx();", AssignmentExpression(Position(2, 16), IdentifierExpression(Position(2, 3), "i"), CallExpression(Position(2, 13), "getx", [], IdentifierExpression(Position(2, 6), "x")))),
+    ("i = i - 1;", AssignmentStatement(Position(2, 13), IdentifierExpression(Position(2, 3), "i"), SumExpression(Position(2, 10), IdentifierExpression(Position(2, 7), "i"), "-", IntegerExpression(Position(2, 10), 1)))),
+    ("i = i + 1;", AssignmentStatement(Position(2, 13), IdentifierExpression(Position(2, 3), "i"), SumExpression(Position(2, 10), IdentifierExpression(Position(2, 7), "i"), "+", IntegerExpression(Position(2, 10), 1)))),
+    ("i = i * 1;", AssignmentStatement(Position(2, 13), IdentifierExpression(Position(2, 3), "i"), MulExpression(Position(2, 10), IdentifierExpression(Position(2, 7), "i"), "*", IntegerExpression(Position(2, 10), 1)))),
+    ("i = i / 1;", AssignmentStatement(Position(2, 13), IdentifierExpression(Position(2, 3), "i"), MulExpression(Position(2, 10), IdentifierExpression(Position(2, 7), "i"), "/", IntegerExpression(Position(2, 10), 1)))),
+    ("i = x + y;", AssignmentStatement(Position(2, 13), IdentifierExpression(Position(2, 3), "i"), SumExpression(Position(2, 10), IdentifierExpression(Position(2, 7), "x"), "+", IdentifierExpression(Position(2, 10), "y")))),
+    ("i = (int) x", AssignmentStatement(Position(2, 14), IdentifierExpression(Position(2, 3), "i"), CastExpression(Position(2, 14), Int(), IdentifierExpression(Position(2, 14), "x")))),
+    ("i = x.getx();", AssignmentStatement(Position(2, 16), IdentifierExpression(Position(2, 3), "i"), CallExpression(Position(2, 13), "getx", [], IdentifierExpression(Position(2, 6), "x")))),
     ( """ if (True) {
     }
     """, IfStatement(Position(2, 26), BooleanExpression(Position(2, 10), True), Block([]), None)),
@@ -123,7 +123,7 @@ MultiStatement = [
     ( """
     x = 1;
     y = 2;
-    """, [AssignmentExpression(Position(2, 16), IdentifierExpression(Position(2, 7), "x"), IntegerExpression(Position(2, 10), 1)), AssignmentExpression(Position(2, 29), IdentifierExpression(Position(2, 18), "y"), IntegerExpression(Position(2, 21), 2))]),
+    """, [AssignmentStatement(Position(2, 16), IdentifierExpression(Position(2, 7), "x"), IntegerExpression(Position(2, 10), 1)), AssignmentStatement(Position(2, 29), IdentifierExpression(Position(2, 18), "y"), IntegerExpression(Position(2, 21), 2))]),
 ]
 
 @pytest.mark.parametrize("stream,expected", MultiStatement)

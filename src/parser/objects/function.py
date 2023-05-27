@@ -1,9 +1,10 @@
 from parser.objects.type import Type
 from parser.objects.block import Block
 from utility.utility import VALUE_TYPE, Position
+from parser.objects.node import Node
 from copy import deepcopy
 
-class Function:
+class Function(Node):
     name: str
     block: Block
     argument_list: list

@@ -1,7 +1,8 @@
 from utility.utility import Position
+from parser.objects.node import Node
 from copy import deepcopy
 
-class Expression:
+class Expression(Node):
     position: Position
 
     def __init__(self, position) -> None:
@@ -112,15 +113,6 @@ class CallExpression(Expression):
             output += f"{expression}, "
         output += f"<{self.position}>"
         return output
-
-class AssignmentExpression(Expression):
-    def __init__(self, position, identifier, expression) -> None:
-        super().__init__(position)
-        self.identifier = identifier
-        self.expression = expression
-
-    def __str__(self) -> str:
-        return f"AssignmentExpression({self.identifier}, {self.expression}) <{self.position}>"
 
 class IdentifierExpression(Expression):
     def __init__(self, position, identifier) -> None:

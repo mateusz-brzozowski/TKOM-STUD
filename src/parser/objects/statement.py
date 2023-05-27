@@ -2,13 +2,14 @@ from __future__ import annotations
 from utility.utility import Position, VALUE_TYPE
 from parser.objects.expression import Expression
 from parser.objects.type import Type
+from parser.objects.node import Node
 from copy import deepcopy
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from parser.objects.block import Block
 
-class Statement:
+class Statement(Node):
     position: Position
 
     def __init__(self, position) -> None:
@@ -81,17 +82,6 @@ class DeclarationStatement(Statement):
     def __str__(self) -> str:
         return f'DeclarationStatement({self.type}, {self.identifier}, {self.expression}) <{self.position}>'
 
-
-class CallStatement(Statement):
-    def __init__(self, position, function, arguments) -> None:
-        super().__init__(position)
-        self.identifier = function[0]
-        self.function_name = function[1]
-        self.arguments = arguments
-
-    def __str__(self) -> str:
-        return f"CallStatement({self.identifier}, {self.function_name}, {self.arguments}) <{self.position}>"
-
 class AssignmentStatement(Statement):
     def __init__(self, position, identifier, expression) -> None:
         super().__init__(position)
@@ -100,19 +90,3 @@ class AssignmentStatement(Statement):
 
     def __str__(self) -> str:
         return f"AssignmentStatement({self.identifier}, {self.expression}) <{self.position}>"
-
-class IdentifierStatement(Statement):
-    def __init__(self, position, identifier) -> None:
-        super().__init__(position)
-        self.identifier = identifier
-
-    def __str__(self) -> str:
-        return f"IdentifierStatement({self.identifier}) <{self.position}>"
-
-class CommentStatement(Statement):
-    def __init__(self, position, value) -> None:
-        super().__init__(position)
-        self.value = value
-
-    def __str__(self) -> str:
-        return f"CommentStatement({self.value}) <{self.position}>"

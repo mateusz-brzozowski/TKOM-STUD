@@ -1,4 +1,6 @@
-class Type:
+from parser.objects.node import Node
+
+class Type(Node):
     def __str__(self) -> str:
         return f"{type(self).__name__}"
 

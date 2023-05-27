@@ -1,6 +1,7 @@
 from parser.objects.function import Function
+from parser.objects.node import Node
 
-class Program:
+class Program(Node):
     objects: list[Function]
 
     def __init__(self, objects) -> None:

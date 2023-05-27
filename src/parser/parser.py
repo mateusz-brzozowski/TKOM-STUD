@@ -11,14 +11,10 @@ from parser.objects.statement import (
     IterateStatement,
     ReturnStatement,
     DeclarationStatement,
-    CommentStatement,
-    CallStatement,
-    AssignmentStatement,
-    IdentifierStatement
+    AssignmentStatement
 )
 from parser.objects.expression import (
     Expression,
-    LogicalExpression,
     OrExpression,
     AndExpression,
     RelativeExpression,
@@ -30,7 +26,6 @@ from parser.objects.expression import (
     StringExpression,
     BooleanExpression,
     CallExpression,
-    AssignmentExpression,
     IdentifierExpression,
     CastExpression
 )
@@ -159,8 +154,7 @@ class Parser:
             self._parse_iterate_statement() or
             self._parse_return_statement() or
             self._parse_declaration_statement() or
-            self._parse_assignment_or_exp() or
-            self._parse_comment()
+            self._parse_assignment_or_exp()
         )
 
     # if_statement = "if", "(", logical_expression, ")", block, ["else", block] ;
@@ -274,7 +268,7 @@ class Parser:
             self._check_and_consume_token(TokenType.SEMICOLON)
 
         if assignment:
-            return AssignmentExpression(self.lexer.token.position, id_or_exp, expression)
+            return AssignmentStatement(self.lexer.token.position, id_or_exp, expression)
         else:
             return id_or_exp
 
@@ -512,12 +506,4 @@ class Parser:
             value = self.lexer.token.value
             self.lexer.next_token()
             return BooleanExpression(position, value)
-        return None
-
-    def _parse_comment(self) -> CommentStatement:
-        if self.lexer.token.token_type == TokenType.COMMENT:
-            value = self.lexer.token.value
-            # TODO: dodać warstwę pośrednią, która pomija komentarze
-            self.lexer.next_token()
-            return CommentStatement(self.lexer.token.position, value)
         return None
