@@ -19,7 +19,7 @@ class Function(Node):
         self.declaration_type = declaration_type
 
     def __str__(self) -> str:
-        output =  f"Function({self.name}, ["
+        output = f"Function({self.name}, ["
         pos = 1
         for type, identifier in self.argument_list:
             output += f"{type, identifier}"
@@ -30,3 +30,6 @@ class Function(Node):
         for statement in self.block.statements:
             output += f"\t{statement}\n"
         return output
+
+    def get_name(self):
+        return self.name

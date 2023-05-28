@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 from lexer.lexer_for_parser import LexerForParser
 from parser.parser import Parser
 from error.error_manager import LexerErrorManager, ParserErrorManager
+from interpreter.interpreter import Interpreter
 
 
 def main() -> None:
@@ -11,9 +12,13 @@ def main() -> None:
     with open(args.file, 'r') as file:
         lexer = LexerForParser(file, LexerErrorManager())
         parser = Parser(lexer, ParserErrorManager())
-        program = parser.parse_program()
-        print(program)
-        print(parser.error_manager.print_errors())
+        interpreter = Interpreter(parser)
+        interpreter.interpret()
+        # program = parser.parse_program()
+        # print(program)
+        # print(lexer.error_manager.print_errors())
+        # print("--------------------")
+        # print(parser.error_manager.print_errors())
 
 
 if __name__ == '__main__':

@@ -65,6 +65,7 @@ class MulExpression(LogicalExpression):
 
 class NegatedExpression(Expression):
     expression: Expression
+
     def __init__(self, position, expression) -> None:
         super().__init__(position)
         self.expression = expression
@@ -101,7 +102,7 @@ class BooleanExpression(LiteralExpression):
         return super().__str__()
 
 class CallExpression(Expression):
-    def __init__(self, position, identifier, expressions, expression = None) -> None:
+    def __init__(self, position, identifier, expressions, expression=None) -> None:
         super().__init__(position)
         self.expression = expression
         self.identifier = identifier

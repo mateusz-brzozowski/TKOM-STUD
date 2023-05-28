@@ -1,8 +1,8 @@
 class Visitor:
-    def accept(self, node):
-        method = "visit_" + node.__class__.__name__
-        visitor = getattr(self, method, self._generic_visit)
+    def visit(self, node):
+        method = 'visit_' + node.__class__.__name__
+        visitor = getattr(self, method, self.generic_visit)
         return visitor(node)
 
-    def _generic_visit(self, node):
-        raise Exception("No Visit_{} method".format(type(node).__name__))
+    def generic_visit(self, node):
+        raise Exception('No visit_{} method'.format(type(node).__name__))

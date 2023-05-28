@@ -293,7 +293,20 @@ class Parser:
 
     # expression = expression_call
     def _parse_expression(self) -> Expression:
-        return self._parse_expression_call()
+        return self._pase_multi_expression_call()
+
+    def _pase_multi_expression_call(self) -> Expression:
+        left = self._parse_expression_call()
+        if left is None:
+            return None
+
+        while self.lexer.token.token_type == TokenType.DOT:
+            self.lexer.next_token()
+            right = self._parse_expression_call()
+            if right is None:
+                return None
+            left = CallExpression(self.lexer.token.position, right, [], left)
+        return left
 
     # expression_call = simple_expression, [".", identifier, '(', [expression_list], ')']
     def _parse_expression_call(self) -> Expression:
@@ -310,9 +323,11 @@ class Parser:
         self.lexer.next_token()
         # wielokrotne odwołania x.x.x.getx()
 
-        self._check_and_consume_token(TokenType.START_ROUND)
-        expression_list = self._parse_expression_list()
-        self._check_and_consume_token(TokenType.STOP_ROUND)
+        expression_list = []
+        if self.lexer.token.token_type == TokenType.START_ROUND:
+            self.lexer.next_token()
+            expression_list = self._parse_expression_list()
+            self._check_and_consume_token(TokenType.STOP_ROUND)
 
         return CallExpression(self.lexer.token.position, identifier, expression_list, expression)
 
