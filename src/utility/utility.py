@@ -117,6 +117,12 @@ UNARY_OPERATORS: list[TokenType] = [
     TokenType.SUBTRACT,
 ]
 
+LITERAL_TYPES: dict[Type, type] = {
+    Int: int,
+    Dec: float,
+    Bool: bool,
+    String: str,
+}
 
 class Position:
     line: int

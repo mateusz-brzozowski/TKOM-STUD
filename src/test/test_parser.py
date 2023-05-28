@@ -65,7 +65,7 @@ OneStatement = [
     ("print(True);", CallExpression(Position(2, 12), "print", [BooleanExpression(Position(2, 11), True)])),
     ("print(x);", CallExpression(Position(2, 9), "print", [IdentifierExpression(Position(2, 8), "x")])),
     ("x.getx();", CallExpression(Position(2, 9), "getx", [], IdentifierExpression(Position(2, 2), "x"))),
-    ("dec negative = -1.5;" , DeclarationStatement(Position(2, 23), (Dec(), "negative"), NegatedExpression(Position(2, 20), DecimalExpression(Position(2, 20), 1.5)))),
+    ("dec negative = -1.5;" , DeclarationStatement(Position(2, 23), (Dec(), "negative"), NegatedExpression(Position(2, 20), '-', DecimalExpression(Position(2, 20), 1.5)))),
     ("int x = a * (b + (int) c);", DeclarationStatement(Position(2, 29), (Int(), "x"), MulExpression(Position(2, 26), IdentifierExpression(Position(2, 11), "a"), "*", SumExpression(Position(2, 25), IdentifierExpression(Position(2, 16), "b"), "+", CastExpression(Position(2, 25), Int(), IdentifierExpression(Position(2, 25), "c")))))),
     ("print(t.area());", CallExpression(Position(2, 16), "print", [CallExpression(Position(2, 15), "area", [], IdentifierExpression(Position(2, 8), "t"))])),
     ("s.move(2, 3);", CallExpression(Position(2, 13), "move", [IntegerExpression(Position(2, 9), 2), IntegerExpression(Position(2, 12), 3)], IdentifierExpression(Position(2, 2), "s"))),
@@ -106,7 +106,7 @@ OneStatement = [
     """, IterateStatement(Position(2, 42), (Int(), "i"), CallExpression(Position(2, 23), "getx", [], IdentifierExpression(Position(2, 16), "x")), Block([]))),
     ( """ if ( x or not ( z > 0 and x < 0 ) ) {
         }
-    """, IfStatement(Position(2, 56), OrExpression(Position(2, 36), IdentifierExpression(Position(2, 10), "x"), "or", NegatedExpression(Position(2, 36), AndExpression(Position(2, 34), RelativeExpression(Position(2, 26), IdentifierExpression(Position(2, 20), "z"), ">", IntegerExpression(Position(2, 26), 0)), "and", RelativeExpression(Position(2, 34), IdentifierExpression(Position(2, 30), "x"), "<", IntegerExpression(Position(2, 34), 0))))), Block([]), None)),
+    """, IfStatement(Position(2, 56), OrExpression(Position(2, 36), IdentifierExpression(Position(2, 10), "x"), "or", NegatedExpression(Position(2, 36), "not", AndExpression(Position(2, 34), RelativeExpression(Position(2, 26), IdentifierExpression(Position(2, 20), "z"), ">", IntegerExpression(Position(2, 26), 0)), "and", RelativeExpression(Position(2, 34), IdentifierExpression(Position(2, 30), "x"), "<", IntegerExpression(Position(2, 34), 0))))), Block([]), None)),
     ]
 @pytest.mark.parametrize("stream,expected", OneStatement)
 def test_one_statement(stream, expected):

@@ -233,6 +233,8 @@ class Parser:
 
         self.lexer.next_token()
         expression = self._parse_logical_expression()
+        if expression is None:
+            self.error_manager.add_error(ErrorTypes.MISSING_EXPRESSION, self.lexer.token, self.lexer.token.position)
 
         self._check_and_consume_token(TokenType.SEMICOLON)
 
@@ -469,6 +471,7 @@ class Parser:
         negated = False
         if self.lexer.token.token_type in UNARY_OPERATORS:
             negated = True
+            operator = self.lexer.token.value
             self.lexer.next_token()
 
         expression = self._parse_factor()
@@ -477,7 +480,7 @@ class Parser:
             return None
 
         if negated:
-            return NegatedExpression(self.lexer.token.position, expression)
+            return NegatedExpression(self.lexer.token.position, operator, expression)
         return expression
 
     def _parse_factor(self) -> Expression:

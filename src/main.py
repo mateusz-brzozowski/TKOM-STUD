@@ -13,12 +13,15 @@ def main() -> None:
         lexer = LexerForParser(file, LexerErrorManager())
         parser = Parser(lexer, ParserErrorManager())
         interpreter = Interpreter(parser)
-        interpreter.interpret()
+        try:
+            interpreter.interpret()
+        except Exception as e:
+            print(e)
         # program = parser.parse_program()
         # print(program)
-        # print(lexer.error_manager.print_errors())
-        # print("--------------------")
-        # print(parser.error_manager.print_errors())
+        print(lexer.error_manager.print_errors())
+        print("--------------------")
+        print(parser.error_manager.print_errors())
 
 
 if __name__ == '__main__':

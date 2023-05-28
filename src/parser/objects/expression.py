@@ -1,5 +1,6 @@
 from utility.utility import Position
 from parser.objects.node import Node
+from typing import Union
 from copy import deepcopy
 
 class Expression(Node):
@@ -9,7 +10,7 @@ class Expression(Node):
         self.position = deepcopy(position)
 
 class LiteralExpression(Expression):
-    value: int
+    value: Union[int, float, bool, str]
 
     def __init__(self, position, value) -> None:
         super().__init__(position)
@@ -65,13 +66,15 @@ class MulExpression(LogicalExpression):
 
 class NegatedExpression(Expression):
     expression: Expression
+    operator: str
 
-    def __init__(self, position, expression) -> None:
+    def __init__(self, position, operator, expression) -> None:
         super().__init__(position)
+        self.operator = operator
         self.expression = expression
 
     def __str__(self) -> str:
-        return f"NegatedExpression({self.expression}) <{self.position}>"
+        return f"NegatedExpression({self.operator}, {self.expression}) <{self.position}>"
 
 class IntegerExpression(LiteralExpression):
     def __init__(self, position, value) -> None:
