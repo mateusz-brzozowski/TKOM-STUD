@@ -77,7 +77,14 @@ class Interpreter(Visitor):
             condition = self.visit(while_statement.condition)
 
     def visit_IterateStatement(self, iterate_statement: IterateStatement) -> None:
-        pass
+        value = self._get_value(self.visit(iterate_statement.expression))
+        shapes = getattr(value, "shapes")
+        self.environment.create_local_scope()
+        self.environment.add_variable(Variable(iterate_statement.type, iterate_statement.identifier, None))
+        for shape in shapes:
+            self.environment.set_variable(iterate_statement.identifier, shape)
+            self.visit(iterate_statement.block)
+        self.environment.destroy_local_scope()
 
     def visit_ReturnStatement(self, return_statement: ReturnStatement) -> None:
         return_value = self.visit(return_statement.expression)
@@ -148,7 +155,8 @@ class Interpreter(Visitor):
         root = self._get_value(self.visit(variable_call.root_expression))
         name, arguments = self.visit(variable_call.called_expression)
         function = getattr(root, name, self._not_existing_function)
-        return function(*arguments)
+        argument_values = [self._get_value(self.visit(argument)) for argument in arguments]
+        return function(*argument_values)
 
     def _not_existing_function(self, name) -> None:
         raise Exception('No visit_{} method'.format(name))

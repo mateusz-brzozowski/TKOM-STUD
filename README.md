@@ -20,7 +20,7 @@ Figury geometryczne i ich charakterystyczne wielkości:
     - Średnica (d) - dwukrotność promienia.
 - Kwadrat:
     - Bok (a) - długość każdej z czterech równych krawędzi.
-    - Przekątna (diagonal) - odległość między dwoma przeciwległymi wierzchołkami.
+    - Przekątna (d) - odległość między dwoma przeciwległymi wierzchołkami.
     - Promień okręgu wpisanego (r) i promień okręgu opisanego (R)
 - Prostokąt:
     - Bok krótszy (a) i bok dłuższy (b) - długości dwóch przeciwległych krawędzi.
@@ -90,7 +90,7 @@ Założenia dotyczące programu:
 - złożone
     - `String` - ciąg znaków
     - `Shape` - figura, jest to typ nadrzędny, dla pozostałych figur
-    - `Circle(x, y, value)` - koło
+    - `Circle(x, y, r)` - koło
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy promień koła, promień może być typu int lub float z wartością dodatnią.
     - `Square(x, y, a)` - kwadrat
@@ -102,7 +102,7 @@ Założenia dotyczące programu:
     - `Triangle(x, y, a, b, alfa)` - trójkąt
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy dwa boki trójkąta i kąt pomiędzy nimi, boki mogą być typu int lub float z wartością dodatnią, natomiast kąt jest typu int z zakresu od 0 do 180.
-    - `Rhomb(x, y, a, b, alfa)` - romb
+    - `Rhomb(x, y, a, alfa)` - romb
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy bok rombu i kąt pomiędzy nimi, bok może być typu int lub float z wartością dodatnią, natomiast kąt jest typu int z zakresu od 0 do 180.
     - `Trapeze(x, y, a, b, alfa, beta)` - trapez
@@ -543,11 +543,11 @@ def main() {
     Triangle t = Triangle(0, 0, 3, 4, 55);
     print(t.area());
 
-    Rectangle r = Rectangle(0, 0, 5);
+    Rectangle r = Rectangle(0, 0, 5, 4);
     print(r.perimeter());
 
     Square s = Square(0, 0, 5);
-    print(s.diagonal());
+    print(s.d());
 
     s.move(2, 3);
 }
@@ -571,16 +571,16 @@ def main(){
 - pętle, instrukcje warunkowe i iterowanie po kolekcji
 ```c++
 def main(){
-    Rectangle r = Rectangle(0, 0, 5);
+    Rectangle r = Rectangle(0, 0, 5, 4);
     dec r_per = r.perimeter();
 
     Square s = Square(0, 0, 5);
     dec s_per = s.perimeter();
 
-    dec suma = 0;
+    dec suma = 0.0;
 
     if ( s.area() != 2.5 or r_per == 2) {
-        print(s.diagonal());
+        print(s.d());
     }
 
     if (r_per > s_per) {
@@ -593,8 +593,8 @@ def main(){
     int i = 0;
     Canvas c = Canvas();
     while ( i <= 20 ) {
-        c.add(Cricle(i, i, i));
-        i = i - 1;
+        c.push(Circle(i, i, i));
+        i = i + 1;
     }
 
     for ( Shape shape : c) {
@@ -607,13 +607,13 @@ def main(){
 - definiowanie funkcji i rekursywne wywołanie
 ```c++
 def Square gasket(int x, int y, dec dim, Canvas c){
+    dec new_dim = dim - 2.0;
     if ( dim < 8) {
         return Square(x, y, dim);
     } else {
-        dec = new_dim = dim / 2;
-        gasket(x, y, new_dim);
-        gasket(x + new_dim, y, new_dim);
-        gasket(x + new_dim, y + new_dim, new_dim);
+        gasket(x, y, new_dim, c);
+        gasket(x + new_dim, y, new_dim, c);
+        gasket(x + new_dim, y + new_dim, new_dim, c);
     }
 }
 
@@ -630,7 +630,7 @@ def printInformation(Shape shape){
 
 def main(){
     Canvas c = Canvas();
-    c.add(gasket(0,0, 248));
+    c.push(gasket(0,0, 6.0, c));
     c.display();
     Triangle t = getTriangle(0, 10, 20, 30);
 

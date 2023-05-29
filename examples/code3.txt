@@ -1,14 +1,14 @@
 def main(){
-    Rectangle r = Rectangle(0, 0, 5);
+    Rectangle r = Rectangle(0, 0, 5, 4);
     dec r_per = r.perimeter();
 
     Square s = Square(0, 0, 5);
     dec s_per = s.perimeter();
 
-    dec suma = 0;
+    dec suma = 0.0;
 
     if ( s.area() != 2.5 or r_per == 2) {
-        print(s.diagonal());
+        print(s.d());
     }
 
     if (r_per > s_per) {
@@ -21,8 +21,8 @@ def main(){
     int i = 0;
     Canvas c = Canvas();
     while ( i <= 20 ) {
-        c.add(Cricle(i, i, i));
-        i = i - 1;
+        c.push(Circle(i, i, i));
+        i = i + 1;
     }
 
     for ( Shape shape : c) {
