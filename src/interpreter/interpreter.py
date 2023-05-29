@@ -30,7 +30,7 @@ from parser.objects.expression import (
     IdentifierExpression,
     CastExpression
 )
-from utility.utility import LITERAL_TYPES
+from utility.utility import LITERAL_TYPES, OBJECT_TYPES
 
 
 class ReturnException(Exception):
@@ -100,33 +100,68 @@ class Interpreter(Visitor):
 
 
     def visit_AssignmentStatement(self, assignment_statement: AssignmentStatement) -> None:
-        new_variable: Variable = self.visit(assignment_statement.expression)
+        value = self._get_value(self.visit(assignment_statement.expression))
         name = assignment_statement.identifier.identifier
 
         if self.environment.has_variable(name):
             variable: Variable = self.environment.get_variable(name)
-            if variable.type != new_variable.type:
-                raise Exception(f"Error [{assignment_statement.position}] in assignment Expected {variable.type} but got {new_variable.type}")
-            self.environment.set_variable(name, new_variable.value)
+            if variable.type != type(value):
+                raise Exception(f"Error [{assignment_statement.position}] in assignment Expected {variable.type} but got {type(value)}")
+            self.environment.set_variable(name, value)
 
 
-    def visit_CallExpression(self, call_expression: CallExpression) -> None:
-        function = self.environment.get_function(call_expression.called_expression)
-        return_type = type(function.declaration_type)
+    def visit_FunctionCall(self, function_call: CallExpression) -> None:
+        name = function_call.called_expression
+        function = self.environment.get_function(name)
+
+        return_type = function.declaration_type
         if return_type in LITERAL_TYPES:
             return_type = LITERAL_TYPES[return_type]
 
-        arguments = []
-        for argument in call_expression.arguments:
-            arguments.append(self.visit(argument))
+        variables = []
+        for argument, parameter in zip(function_call.arguments, function.argument_list):
+            value = self._get_value(self.visit(argument))
+            variables.append(Variable(parameter[0], parameter[1], value))
 
+        self.environment.create_function_local_scope(variables)
+
+        return_value = None
         try:
             self.visit(function.block)
         except ReturnException as return_exception:
             return_value = self._get_value(return_exception.return_value)
-            print(return_value)
             if type(return_value) != return_type:
-                raise Exception(f"Error [{call_expression.position}] in call Expected {return_type} but got {type(return_value)}")
+                raise Exception(f"Error [{function_call.position}] in call Expected {return_type} but got {type(return_value)}")
+
+        self.environment.destroy_function_local_scope()
+        return return_value
+
+    def visit_MethodCall(self, method_call: CallExpression) -> None:
+        name = method_call.called_expression
+        if name == 'print':
+            return self.execute_print(method_call.arguments)
+        elif name in OBJECT_TYPES:
+            return self.create_object(OBJECT_TYPES[name], method_call.arguments)
+        return (method_call.called_expression, method_call.arguments)
+
+    def visit_VariableCall(self, variable_call: CallExpression) -> None:
+        root = self._get_value(self.visit(variable_call.root_expression))
+        name, arguments = self.visit(variable_call.called_expression)
+        function = getattr(root, name, self._not_existing_function)
+        return function(*arguments)
+
+    def _not_existing_function(self, name) -> None:
+        raise Exception('No visit_{} method'.format(name))
+
+    def visit_CallExpression(self, call_expression: CallExpression) -> any:
+        if call_expression.root_expression is None:
+            name = call_expression.called_expression
+            if self.environment.has_function(name):
+                return self.visit_FunctionCall(call_expression)
+            else:
+                return self.visit_MethodCall(call_expression)
+        else:
+            return self.visit_VariableCall(call_expression)
 
     def visit_IdentifierExpression(self, identifier_expression: IdentifierExpression) -> Variable:
         if self.environment.has_variable(identifier_expression.identifier):
@@ -164,6 +199,16 @@ class Interpreter(Visitor):
         right = self._get_value(self.visit(logical_expression.right))
         operator = logical_expression.operator
         return self._get_operator_function(operator)(left, right)
+
+    def execute_print(self, expressions: list) -> None:
+        output = ""
+        for expression in expressions:
+            output += str(self._get_value(self.visit(expression)))
+        print(output)
+
+    def create_object(self, object_type: Type, arguments: list) -> any:
+        argument_values = [self._get_value(self.visit(argument)) for argument in arguments]
+        return object_type(*argument_values)
 
     def _get_operator_function(self, operator: str):
         operator_functions = {

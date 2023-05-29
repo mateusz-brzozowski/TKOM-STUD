@@ -5,6 +5,7 @@ class Environment:
     def __init__(self) -> None:
         self.function_scope: Scope = Scope()
         self.local_scope: Scope = Scope()
+        self.last_scope: Scope = Scope()
 
     def add_function(self, function: Function) -> None:
         self.function_scope.add_variable(function)
@@ -20,6 +21,15 @@ class Environment:
 
     def destroy_local_scope(self):
         self.local_scope = self.local_scope.parent_scope
+
+    def create_function_local_scope(self, variables):
+        self.last_scope = self.local_scope
+        self.local_scope = Scope()
+        for variable in variables:
+            self.local_scope.add_variable(variable)
+
+    def destroy_function_local_scope(self):
+        self.local_scope = self.last_scope
 
     def add_variable(self, variable):
         self.local_scope.add_variable(variable)

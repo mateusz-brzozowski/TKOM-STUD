@@ -124,6 +124,19 @@ LITERAL_TYPES: dict[Type, type] = {
     String: str,
 }
 
+OBJECT_TYPES: dict[Type, type] = {
+    "Shape" : Shape,
+    "Circle" : Circle,
+    "Square" : Square,
+    "Rectangle" : Rectangle,
+    "Triangle" : Triangle,
+    "Rhomb" : Rhomb,
+    "Trapeze" : Trapeze,
+    "Polygon" : Polygon,
+    "Canvas" : Canvas
+}
+
+
 class Position:
     line: int
     column: int

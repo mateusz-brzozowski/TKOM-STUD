@@ -1,4 +1,6 @@
 from parser.objects.node import Node
+from typing import Union
+import math
 
 class Type(Node):
     pass
@@ -23,34 +25,54 @@ class String(Type):
         return "String"
 
 class Shape(Type):
+    x: Union[int, float]
+    y: Union[int, float]
+
+    def __init__(self, x=0, y=0) -> None:
+        self.x = x
+        self.y = y
+
     def __str__(self) -> str:
         return "Shape"
 
-class Circle(Type):
+class Circle(Shape):
     def __str__(self) -> str:
         return "Circle"
 
-class Square(Type):
+class Square(Shape):
     def __str__(self) -> str:
         return "Square"
 
-class Rectangle(Type):
+class Rectangle(Shape):
     def __str__(self) -> str:
         return "Rectangle"
 
-class Triangle(Type):
+class Triangle(Shape):
+    a: Union[int, float]
+    b: Union[int, float]
+    alfa: int
+
+    def __init__(self, x, y, a, b, alfa) -> None:
+        super().__init__(x, y)
+        self.a = a
+        self.b = b
+        self.alfa = alfa
+
     def __str__(self) -> str:
         return "Triangle"
 
-class Rhomb(Type):
+    def area(self) -> Union[int, float]:
+        return (self.a * self.b * math.sin(self.alfa)) / 2
+
+class Rhomb(Shape):
     def __str__(self) -> str:
         return "Rhomb"
 
-class Trapeze(Type):
+class Trapeze(Shape):
     def __str__(self) -> str:
         return "Trapeze"
 
-class Polygon(Type):
+class Polygon(Shape):
     def __str__(self) -> str:
         return "Polygon"
 
