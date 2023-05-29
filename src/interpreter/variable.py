@@ -10,3 +10,12 @@ class Variable:
 
     def get_name(self) -> str:
         return self.name
+
+    def set_value(self, value) -> None:
+        self.value = value
+
+    def set_type(self, type) -> None:
+        self.type = type
+
+    def set_value(self, value) -> None:
+        self.value = value

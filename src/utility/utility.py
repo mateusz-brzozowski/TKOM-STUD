@@ -78,19 +78,19 @@ KEYWORDS: Dict[str, TokenType] = {
 }
 
 DECLARATION_TYPES: Dict[TokenType, Type] = {
-    TokenType.INTEGER: Int(),
-    TokenType.DECIMAL: Dec(),
-    TokenType.BOOL: Bool(),
-    TokenType.STRING: String(),
-    TokenType.SHAPE: Shape(),
-    TokenType.CIRCLE: Circle(),
-    TokenType.SQUARE: Square(),
-    TokenType.RECTANGLE: Rectangle(),
-    TokenType.TRIANGLE: Triangle(),
-    TokenType.RHOMB: Rhomb(),
-    TokenType.TRAPEZE: Trapeze(),
-    TokenType.POLYGON: Polygon(),
-    TokenType.CANVAS: Canvas()
+    TokenType.INTEGER: Int,
+    TokenType.DECIMAL: Dec,
+    TokenType.BOOL: Bool,
+    TokenType.STRING: String,
+    TokenType.SHAPE: Shape,
+    TokenType.CIRCLE: Circle,
+    TokenType.SQUARE: Square,
+    TokenType.RECTANGLE: Rectangle,
+    TokenType.TRIANGLE: Triangle,
+    TokenType.RHOMB: Rhomb,
+    TokenType.TRAPEZE: Trapeze,
+    TokenType.POLYGON: Polygon,
+    TokenType.CANVAS: Canvas
 }
 
 RELATIVE_OPERATORS: list[TokenType] = [

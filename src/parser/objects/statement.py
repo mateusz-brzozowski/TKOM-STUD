@@ -3,6 +3,7 @@ from utility.utility import Position, VALUE_TYPE
 from parser.objects.expression import Expression
 from parser.objects.type import Type
 from parser.objects.node import Node
+from parser.objects.expression import IdentifierExpression
 from copy import deepcopy
 
 from typing import TYPE_CHECKING
@@ -83,6 +84,9 @@ class DeclarationStatement(Statement):
         return f'DeclarationStatement({self.type}, {self.identifier}, {self.expression}) <{self.position}>'
 
 class AssignmentStatement(Statement):
+    identifier: IdentifierExpression
+    expression: Expression
+
     def __init__(self, position, identifier, expression) -> None:
         super().__init__(position)
         self.identifier = identifier

@@ -2,11 +2,9 @@ from parser.objects.function import Function
 from interpreter.scope import Scope
 
 class Environment:
-    function_scope: Scope = Scope()
-    local_scope: Scope = Scope()
-
     def __init__(self) -> None:
-        pass
+        self.function_scope: Scope = Scope()
+        self.local_scope: Scope = Scope()
 
     def add_function(self, function: Function) -> None:
         self.function_scope.add_variable(function)
@@ -25,3 +23,18 @@ class Environment:
 
     def add_variable(self, variable):
         self.local_scope.add_variable(variable)
+
+    def has_variable(self, name: str) -> bool:
+        return self.local_scope.has_variable(name)
+
+    def get_variable(self, name: str):
+        return self.local_scope.get_variable(name)
+
+    def set_variable(self, name: str, value):
+        self.local_scope.set_variable(name, value)
+
+    def set_type(self, name: str, type):
+        self.local_scope.set_type(name, type)
+
+    def set_value(self, name: str, value):
+        self.local_scope.set_value(name, value)

@@ -5,6 +5,7 @@ from parser.parser import Parser
 from parser.objects.program import Program
 from parser.objects.function import Function
 from parser.objects.block import Block
+from parser.objects.type import Type, Int, Dec
 from parser.objects.statement import (
     IfStatement,
     WhileStatement,
@@ -25,7 +26,9 @@ from parser.objects.expression import (
     SumExpression,
     MulExpression,
     NegatedExpression,
-    CallExpression
+    CallExpression,
+    IdentifierExpression,
+    CastExpression
 )
 from utility.utility import LITERAL_TYPES
 
@@ -83,24 +86,28 @@ class Interpreter(Visitor):
     def visit_DeclarationStatement(self, declaration_statement: DeclarationStatement) -> None:
         value = self.visit(declaration_statement.expression)
 
-        declaration_type = type(declaration_statement.type)
+        if isinstance(value, Variable):
+            value = value.value
+
+        declaration_type = declaration_statement.type
         if declaration_type in LITERAL_TYPES:
             declaration_type = LITERAL_TYPES[declaration_type]
 
         if declaration_type != type(value):
-            raise Exception(f"Expected {declaration_type} but got {type(value)}")
+            raise Exception(f"Error [{declaration_statement.position}] in declaration Expected {declaration_type} but got {type(value)}")
 
         self.environment.add_variable(Variable(declaration_type, declaration_statement.identifier, value))
 
 
     def visit_AssignmentStatement(self, assignment_statement: AssignmentStatement) -> None:
-        value = self.visit(assignment_statement.expression)
+        new_variable: Variable = self.visit(assignment_statement.expression)
+        name = assignment_statement.identifier.identifier
 
-        variable = self.environment.get_variable(assignment_statement.identifier)
-        if variable.type != type(value):
-            raise Exception(f"Expected {variable.type} but got {type(value)}")
-
-        variable.value = value
+        if self.environment.has_variable(name):
+            variable: Variable = self.environment.get_variable(name)
+            if variable.type != new_variable.type:
+                raise Exception(f"Error [{assignment_statement.position}] in assignment Expected {variable.type} but got {new_variable.type}")
+            self.environment.set_variable(name, new_variable.value)
 
 
     def visit_CallExpression(self, call_expression: CallExpression) -> None:
@@ -116,11 +123,23 @@ class Interpreter(Visitor):
         try:
             self.visit(function.block)
         except ReturnException as return_exception:
-            return_value = return_exception.return_value
+            return_value = self._get_value(return_exception.return_value)
             print(return_value)
             if type(return_value) != return_type:
-                raise Exception(f"Expected {return_type} but got {type(return_value)}")
+                raise Exception(f"Error [{call_expression.position}] in call Expected {return_type} but got {type(return_value)}")
 
+    def visit_IdentifierExpression(self, identifier_expression: IdentifierExpression) -> Variable:
+        if self.environment.has_variable(identifier_expression.identifier):
+            variable: Variable = self.environment.get_variable(identifier_expression.identifier)
+            return variable
+        else:
+            raise Exception(f"Variable {identifier_expression.identifier} not found")
+
+    def visit_CastExpression(self, cast_expression: CastExpression) -> None:
+        variable = self._get_value(self.visit(cast_expression.expression))
+        cast_type = cast_expression.cast_type
+        new_value = self._get_cast_function(cast_type)(variable)
+        return new_value
 
     def visit_Block(self, block: Block) -> None:
         self.environment.create_local_scope()
@@ -141,8 +160,8 @@ class Interpreter(Visitor):
         return str(string_expression.value)
 
     def visit_LogicalExpression(self, logical_expression: LogicalExpression) -> bool:
-        left = self.visit(logical_expression.left)
-        right = self.visit(logical_expression.right)
+        left = self._get_value(self.visit(logical_expression.left))
+        right = self._get_value(self.visit(logical_expression.right))
         operator = logical_expression.operator
         return self._get_operator_function(operator)(left, right)
 
@@ -162,6 +181,20 @@ class Interpreter(Visitor):
             '/': self.accept_div,
         }
         return operator_functions[operator]
+
+
+    def _get_value(self, variable: any) -> any:
+        if isinstance(variable, Variable):
+            return variable.value
+        else:
+            return variable
+
+    def _get_cast_function(self, cast_type: Type):
+        cast_functions = {
+            Int: self.accept_int,
+            Dec: self.accept_dec,
+        }
+        return cast_functions[cast_type]
 
     def visit_OrExpression(self, or_expression: OrExpression) -> bool:
         return self.visit_LogicalExpression(or_expression)
@@ -226,3 +259,9 @@ class Interpreter(Visitor):
 
     def accept_div(self, left: any, right: any) -> any:
         return left / right
+
+    def accept_int(self, value: any) -> int:
+        return int(value)
+
+    def accept_dec(self, value: any) -> float:
+        return float(value)
