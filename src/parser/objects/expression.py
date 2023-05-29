@@ -105,17 +105,17 @@ class BooleanExpression(LiteralExpression):
         return super().__str__()
 
 class CallExpression(Expression):
-    def __init__(self, position, identifier, expressions, expression=None) -> None:
+    def __init__(self, position, root_expression, called_expression, arguments) -> None:
         super().__init__(position)
-        self.expression = expression
-        self.identifier = identifier
-        self.expressions = expressions
+        self.root_expression = root_expression
+        self.called_expression = called_expression
+        self.arguments = arguments
 
     def __str__(self) -> str:
-        output = f"CallExpression({self.expression}, {self.identifier}) "
-        for expression in self.expressions:
+        output = f"CallExpression({self.root_expression}, {self.called_expression}) ["
+        for expression in self.arguments:
             output += f"{expression}, "
-        output += f"<{self.position}>"
+        output += f"] <{self.position}>"
         return output
 
 class IdentifierExpression(Expression):

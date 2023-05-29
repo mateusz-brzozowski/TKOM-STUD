@@ -295,43 +295,22 @@ class Parser:
 
     # expression = expression_call
     def _parse_expression(self) -> Expression:
-        return self._pase_multi_expression_call()
-
-    def _pase_multi_expression_call(self) -> Expression:
-        left = self._parse_expression_call()
-        if left is None:
-            return None
-
-        while self.lexer.token.token_type == TokenType.DOT:
-            self.lexer.next_token()
-            right = self._parse_expression_call()
-            if right is None:
-                return None
-            left = CallExpression(self.lexer.token.position, right, [], left)
-        return left
+        return self._parse_expression_call()
 
     # expression_call = simple_expression, [".", identifier, '(', [expression_list], ')']
     def _parse_expression_call(self) -> Expression:
-        expression = self._parse_simple_expression()
+        root_expression = self._parse_simple_expression()
 
         if self.lexer.token.token_type != TokenType.DOT:
-            return expression
+            return root_expression
 
         self.lexer.next_token()
         if self.lexer.token.token_type != TokenType.IDENTIFIER:
             self.error_manager.add_error(ErrorTypes.MISSING_IDENTIFIER, self.lexer.token, self.lexer.token.position)
             return None
-        identifier = self.lexer.token.value
-        self.lexer.next_token()
-        # wielokrotne odwołania x.x.x.getx()
+        called_expression = self._parse_expression_call()
 
-        expression_list = []
-        if self.lexer.token.token_type == TokenType.START_ROUND:
-            self.lexer.next_token()
-            expression_list = self._parse_expression_list()
-            self._check_and_consume_token(TokenType.STOP_ROUND)
-
-        return CallExpression(self.lexer.token.position, identifier, expression_list, expression)
+        return CallExpression(self.lexer.token.position, root_expression, called_expression, [])
 
     def _parse_simple_expression(self) -> Expression:
         return (
@@ -360,7 +339,7 @@ class Parser:
             self.lexer.next_token()
             expression_list = self._parse_expression_list()
             self._check_and_consume_token(TokenType.STOP_ROUND)
-            return CallExpression(self.lexer.token.position, identifier, expression_list)
+            return CallExpression(self.lexer.token.position, None, identifier, expression_list)
         if is_type:
             return None
         return IdentifierExpression(self.lexer.token.position, identifier)

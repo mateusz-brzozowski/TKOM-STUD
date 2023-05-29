@@ -57,7 +57,7 @@ class Interpreter(Visitor):
 
         if self.environment.has_function('main'):
             main_function = self.environment.get_function('main')
-            main_call = CallExpression(main_function.position, main_function.name, [])
+            main_call = CallExpression(main_function.position, None, main_function.name, [])
             self.visit_CallExpression(main_call)
 
     def visit_Function(self, function: Function):
@@ -111,13 +111,13 @@ class Interpreter(Visitor):
 
 
     def visit_CallExpression(self, call_expression: CallExpression) -> None:
-        function = self.environment.get_function(call_expression.identifier)
+        function = self.environment.get_function(call_expression.called_expression)
         return_type = type(function.declaration_type)
         if return_type in LITERAL_TYPES:
             return_type = LITERAL_TYPES[return_type]
 
         arguments = []
-        for argument in call_expression.expressions:
+        for argument in call_expression.arguments:
             arguments.append(self.visit(argument))
 
         try:
