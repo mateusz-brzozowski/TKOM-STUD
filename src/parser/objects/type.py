@@ -71,16 +71,7 @@ class Circle(Shape):
         return 2 * self.r
 
     def display(self) -> None:
-        # Create figure and axes
-        fig, ax = plt.subplots()
-
-        # Create a Rectangle patch
-        rect = patches.Rectangle((50, 100), 40, 30, linewidth=1, edgecolor='r', facecolor='none')
-
-        # Add the patch to the Axes
-        ax.add_patch(rect)
-
-        plt.show()
+        return patches.Circle((self.x, self.y), radius=self.r, color=numpy.random.rand(3,))
 
 class Square(Shape):
     a: Union[int, float]
@@ -107,6 +98,9 @@ class Square(Shape):
     def r(self) -> Union[int, float]:
         return self.a / 2
 
+    def display(self) -> None:
+        return patches.Rectangle((self.x, self.y), self.a, self.a, color=numpy.random.rand(3,))
+
 
 class Rectangle(Shape):
     a: Union[int, float]
@@ -132,6 +126,9 @@ class Rectangle(Shape):
     def R(self) -> Union[int, float]:
         return self.d() / 2
 
+    def display(self) -> None:
+        return patches.Rectangle((self.x, self.y), self.a, self.b, color=numpy.random.rand(3,))
+
 
 class Triangle(Shape):
     a: Union[int, float]
@@ -153,6 +150,12 @@ class Triangle(Shape):
     def perimeter(self) -> Union[int, float]:
         return self.a + self.b + math.sqrt(self.a * self.a + self.b * self.b - 2 * self.a * self.b * math.cos(self.alfa))
 
+    def h(self) -> Union[int, float]:
+        return self.b * math.sin(self.alfa)
+
+    def display(self) -> None:
+        return patches.Polygon([[self.x, self.y], [self.x + self.a, self.y], [self.x + self.b * math.cos(self.alfa), self.y + self.b * math.sin(self.alfa)]], color=numpy.random.rand(3,))
+
 class Rhomb(Shape):
     a: Union[int, float]
     alfa: int
@@ -171,6 +174,9 @@ class Rhomb(Shape):
     def perimeter(self) -> Union[int, float]:
         return 4 * self.a
 
+    def display(self) -> None:
+        return patches.Polygon([[self.x, self.y], [self.x + self.a, self.y], [self.x + self.a + self.a * math.cos(self.alfa), self.y + self.a * math.sin(self.alfa)], [self.x + self.a * math.cos(self.alfa), self.y + self.a * math.sin(self.alfa)]], color=numpy.random.rand(3,))
+
 
 class Trapeze(Shape):
     a: Union[int, float]
@@ -178,12 +184,12 @@ class Trapeze(Shape):
     alfa: int
     beta: int
 
-    def __init__(self, x, y, a, b, alfa, beta) -> None:
+    def __init__(self, x, y, a, b, c, alfa) -> None:
         super().__init__(x, y)
         self.a = a
         self.b = b
+        self.c = c
         self.alfa = alfa * (math.pi / 180)
-        self.beta = beta * (math.pi / 180)
 
     def __str__(self) -> str:
         return "Trapeze"
@@ -192,7 +198,12 @@ class Trapeze(Shape):
         return (self.a + self.b) * self.h() / 2
 
     def h(self) -> Union[int, float]:
-        return math.sqrt(self.b * self.b + self.a * self.a - 2 * self.a * self.b * math.cos(self.alfa)) * math.sin(self.beta)
+        return self.c * math.sin(self.alfa)
+
+    def display(self) -> None:
+        temp = self.h() / math.tan(self.alfa)
+        coords = [(self.x, self.y), (self.x + self.a, self.y), (self.x + temp + self.b, self.y + self.h()), (self.x + temp, self.y + self.h())]
+        return patches.Polygon(coords)
 
 class Polygon(Shape):
     a: Union[int, float]
@@ -224,6 +235,9 @@ class Polygon(Shape):
     def alfa(self) -> Union[int, float]:
         return (self.n - 2) * 180 / self.n
 
+    def display(self) -> None:
+        return patches.RegularPolygon((self.x, self.y), self.n, self.a, color=numpy.random.rand(3,))
+
 
 class Canvas(Type):
     shapes: list[Shape]
@@ -241,5 +255,13 @@ class Canvas(Type):
         return self.shapes.pop()
 
     def display(self) -> None:
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        ax.grid(True)
+        ax.axhline(0, color='black', linewidth=1)
+        ax.axvline(0, color='black', linewidth=1)
         for shape in self.shapes:
-            shape.display()
+            path = shape.display()
+            ax.add_patch(path)
+        ax.axis('equal')
+        plt.show()

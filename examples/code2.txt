@@ -3,7 +3,7 @@ def main(){
     Circle circle = Circle(0, 0, 6);
     Polygon p = Polygon(10, 20, 5, 6);
     Rhomb r = Rhomb(6, 20, 4, 60);
-    Trapeze t = Trapeze(8, 9, 6, 8, 60, 90);
+    Trapeze t = Trapeze(8, 9, 6, 8, 6, 90);
     c.push(circle);
     c.push(p);
     c.push(r);

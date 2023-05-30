@@ -20,8 +20,8 @@ from parser.objects.type import (
 
 MAX_INT: int = 2 ** 31 - 1
 MAX_FLOAT: int = 2 ** 31 - 1
-MAX_STRING_LENGTH: int = 20
-MAX_IDENTIFIER_LENGTH: int = 20
+MAX_STRING_LENGTH: int = 200
+MAX_IDENTIFIER_LENGTH: int = 200
 EOF_TYPES: list[str] = ['\n', '\r']
 EOF_CHARS: list[str] = ['', None]
 VALUE_TYPE = Union[str, int, float, bool]

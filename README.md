@@ -105,9 +105,9 @@ Założenia dotyczące programu:
     - `Rhomb(x, y, a, alfa)` - romb
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy bok rombu i kąt pomiędzy nimi, bok może być typu int lub float z wartością dodatnią, natomiast kąt jest typu int z zakresu od 0 do 180.
-    - `Trapeze(x, y, a, b, alfa, beta)` - trapez
+    - `Trapeze(x, y, a, b, c, alfa)` - trapez
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
-        - jako argumenty podajemy dwie podstawy trapezu i kąty przy dłuższej podstawie, boki mogą być typu int lub float z wartością dodatnią, natomiast kąty są typu int z zakresu od 0 do 90.
+        - jako argumenty podajemy dwie podstawy trapezu, bok i ką jaki tworzy ten bok z dłuższą podstawą, boki mogą być typu int lub float z wartością dodatnią, natomiast kąt jest typu int z zakresu od 0 do 90.
     - `Polygon(x, y, a, n)` - wielokąt foremny
         - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
         - jako argumenty podajemy bok i ilość boków, bok może być typu int lub float z wartością dodatnią, natomiast ilość boków może być typu int o wartości co najmniej 3.
@@ -559,7 +559,7 @@ def main(){
     Circle circle = Circle(0, 0, 6);
     Polygon p = Polygon(10, 20, 5, 6);
     Rhomb r = Rhomb(6, 20, 4, 60);
-    Trapeze t = Trapeze(8, 9, 6, 8, 60, 90);
+    Trapeze t = Trapeze(8, 9, 6, 8, 6, 90);
     c.push(circle);
     c.push(p);
     c.push(r);
