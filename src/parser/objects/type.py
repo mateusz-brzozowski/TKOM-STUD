@@ -265,7 +265,7 @@ class Triangle(Shape):
         return patches.Polygon(
             [
                 [self.x, self.y],
-                [self.x + self.a, self.y],
+                [self.x + self.side_a, self.y],
                 [
                     self.x + self.side_b * math.cos(self.angle_alfa),
                     self.y + self.h(),

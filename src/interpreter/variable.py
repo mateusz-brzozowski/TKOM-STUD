@@ -1,9 +1,12 @@
+from parser.objects.type import Type
+
+
 class Variable:
-    type: any
+    type: Type
     name: str
     value: any
 
-    def __init__(self, type, name, value) -> None:
+    def __init__(self, type: Type, name: str, value: any) -> None:
         self.type = type
         self.name = name
         self.value = value
@@ -11,11 +14,8 @@ class Variable:
     def get_name(self) -> str:
         return self.name
 
-    def set_value(self, value) -> None:
+    def set_value(self, value: any) -> None:
         self.value = value
 
-    def set_type(self, type) -> None:
+    def set_type(self, type: Type) -> None:
         self.type = type
-
-    def set_value(self, value) -> None:
-        self.value = value

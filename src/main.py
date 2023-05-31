@@ -41,8 +41,6 @@ def main() -> None:
         except Exception as e:
             print(e)
         print(lexer.error_manager.print_errors())
-        print("--------------------")
-        print(parser.error_manager.print_errors())
 
 
 if __name__ == "__main__":

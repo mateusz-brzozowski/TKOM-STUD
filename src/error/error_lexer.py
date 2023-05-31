@@ -53,8 +53,7 @@ class UnexpectedNewLineSymbolError(LexerError):
         self, position: Position, value: str, exception: str = None
     ) -> None:
         super().__init__(
-            f"""Unexpected new line symbol. : [{value}]
-                expected: [{exception}]""",
+            f"Unexpected new line symbol. : [{value}] expected: [{exception}]",
             position,
         )
 

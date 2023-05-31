@@ -19,8 +19,7 @@ class UnexpectedTokenError(ParserError):
         expected: TokenType,
     ) -> None:
         super().__init__(
-            f"""Unexpected token. : [{token}]
-                expected: [{expected}]""",
+            f"""Unexpected token. : [{token}] expected: [{expected}]""",
             position,
         )
 

@@ -36,7 +36,7 @@ class Function(Node):
             if pos < len(self.argument_list):
                 output += ", "
                 pos += 1
-        output += f"], {self.declaration_type}) <{self.position}>\n"
+        output += f"], {self.declaration_type})\n"
         for statement in self.block.statements:
             output += f"\t{statement}\n"
         return output

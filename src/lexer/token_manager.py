@@ -1,9 +1,10 @@
 from __future__ import annotations
-from enum import Enum
 
-from typing import TYPE_CHECKING
+from enum import Enum
+from typing import TYPE_CHECKING, Union
+
 if TYPE_CHECKING:
-    from utility.utility import Position, VALUE_TYPE
+    from utility.utility import Position
 
 
 class TokenType(Enum):
@@ -78,13 +79,13 @@ class TokenType(Enum):
 
 class Token:
     token_type: TokenType
-    value: VALUE_TYPE
+    value: Union[str, int, float, bool]
     position: Position
 
     def __init__(
         self,
         token_type: TokenType,
-        value: VALUE_TYPE,
+        value: Union[str, int, float, bool],
         position: Position
     ) -> None:
         self.token_type = token_type
@@ -92,4 +93,4 @@ class Token:
         self.position = position
 
     def __str__(self) -> str:
-        return f"Token({self.token_type.name}, {self.value}, {self.position})"
+        return f"Token({self.token_type.name}, {self.value})"

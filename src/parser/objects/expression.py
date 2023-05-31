@@ -23,7 +23,7 @@ class LiteralExpression(Expression):
         self.value = value
 
     def __str__(self) -> str:
-        return f"{type(self).__name__}({self.value}) <{self.position}>"
+        return f"{type(self).__name__}({self.value})"
 
 
 class LogicalExpression(Expression):
