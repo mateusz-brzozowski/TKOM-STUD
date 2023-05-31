@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from parser.parser import Parser
 
-from error.error_manager import ErrorManager, ParserErrorManager
+from error.error_manager import ErrorManager
 from interpreter.interpreter import Interpreter
 from lexer.lexer_for_parser import LexerForParser
 from utility.utility import MAX_IDENTIFIER_LENGTH, MAX_INT, MAX_STRING_LENGTH
@@ -30,10 +30,11 @@ def main() -> None:
 
     args = arg_parser.parse_args()
     with open(args.file, "r") as file:
+        error_manager = ErrorManager()
         lexer = LexerForParser(
-            file, ErrorManager(), args.max_id, args.max_str, args.max_int
+            file, error_manager, args.max_id, args.max_str, args.max_int
         )
-        parser = Parser(lexer, ParserErrorManager())
+        parser = Parser(lexer, error_manager)
         interpreter = Interpreter(parser)
         try:
             interpreter.interpret()

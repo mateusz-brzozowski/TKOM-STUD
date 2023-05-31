@@ -1,17 +1,27 @@
-from parser.objects.type import Type
-from parser.objects.block import Block
-from utility.utility import VALUE_TYPE, Position
-from parser.objects.node import Node
 from copy import deepcopy
+from parser.objects.block import Block
+from parser.objects.expression import Expression
+from parser.objects.node import Node
+from parser.objects.type import Type
+
+from utility.utility import Position
+
 
 class Function(Node):
     name: str
     block: Block
-    argument_list: list
+    argument_list: list[Expression]
     declaration_type: Type
     position: Position
 
-    def __init__(self, position, name, block, argument_list, declaration_type) -> None:
+    def __init__(
+        self,
+        position: Position,
+        name: str,
+        block: Block,
+        argument_list: list[Expression],
+        declaration_type: Type,
+    ) -> None:
         self.position = deepcopy(position)
         self.name = name
         self.block = block
@@ -32,4 +42,5 @@ class Function(Node):
         return output
 
     def get_name(self):
+        """Returns the name of the function"""
         return self.name

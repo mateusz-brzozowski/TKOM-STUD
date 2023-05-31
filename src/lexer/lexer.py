@@ -2,21 +2,22 @@ from io import TextIOBase
 from typing import Union
 
 from error.error_lexer import (CommentOverflowError, DecimalOverflowError,
-                               IntegerOverflowError, LexerError,
-                               StringOverflowError, TooLongIdentifierError,
+                               IntegerOverflowError, InvalidNewLineSymbolError,
+                               LexerError, StringOverflowError,
+                               TooLongIdentifierError,
                                UnexpectedCharacterError,
                                UnexpectedNewLineSymbolError,
                                UnterminatedStringError)
-from error.error_manager import LexerErrorManager
+from error.error_manager import ErrorManager
 from lexer.token_manager import Token, TokenType
-from utility.utility import (COMPLEX_TOKENS, EOF_CHARS, KEYWORDS,
+from utility.utility import (DOUBLE_TOKENS, EOF_CHARS, KEYWORDS,
                              MAX_IDENTIFIER_LENGTH, MAX_INT, MAX_STRING_LENGTH,
-                             NL_TYPES, SIMPLE_TOKENS, Position)
+                             NL_TYPES, SINGLE_TOKENS, Position)
 
 
 class Lexer:
     stream: TextIOBase
-    error_manager: LexerErrorManager
+    error_manager: ErrorManager
     character: str
     position: Position
     token_position: Position
@@ -29,7 +30,7 @@ class Lexer:
     def __init__(
         self,
         stream: TextIOBase,
-        error_manager: LexerErrorManager,
+        error_manager: ErrorManager,
         max_identifier_length: int = MAX_IDENTIFIER_LENGTH,
         max_string_length: int = MAX_STRING_LENGTH,
         max_int: int = MAX_INT,
@@ -46,6 +47,7 @@ class Lexer:
         self.max_int = max_int
 
     def _check_new_line(self) -> bool:
+        """Checks if current character is new line symbol"""
         if self.new_line_char:
             if self.character == self.new_line_char:
                 self.position.line += 1
@@ -56,12 +58,13 @@ class Lexer:
                 self._next_char()
                 return True
             else:
-                self._raise_error(UnexpectedNewLineSymbolError, self.character)
+                self._raise_error(InvalidNewLineSymbolError, self.character)
                 return True
         else:
             return self._try_build_new_line()
 
     def _try_build_new_line(self) -> bool:
+        """Tries to build new line symbol"""
         if self.character not in NL_TYPES:
             return False
         new_line_char = self.character
@@ -80,6 +83,7 @@ class Lexer:
         return True
 
     def _is_white(self) -> bool:
+        """Checks if current character is white space"""
         if self.character in EOF_CHARS or not self.character.isspace():
             return False
         while self.character not in EOF_CHARS and self.character.isspace():
@@ -94,46 +98,55 @@ class Lexer:
         value: Union[str, int, float, bool],
         expected: str = None,
     ) -> None:
+        """Raises error and builds token"""
         self._next_char()
         self.token = Token(TokenType.UNDEFINED, value, self.token_position)
-        self.error_manager.add_error(error(self.position, value))
+        self.error_manager.add_error(
+            error(self.position, value, expected)
+            if expected
+            else error(self.position, value)
+        )
 
     def _try_build_eof(self) -> bool:
+        """Tries to build EOF token"""
         if self.character:
             return False
         self.token = Token(TokenType.EOF, "", self.token_position)
         return True
 
-    def _try_build_simple_tokens(self) -> bool:
-        if self.character not in SIMPLE_TOKENS:
+    def _try_build_single_tokens(self) -> bool:
+        """Tries to build single character token"""
+        if self.character not in SINGLE_TOKENS:
             return False
 
         self.token = Token(
-            SIMPLE_TOKENS[self.character], self.character, self.token_position
+            SINGLE_TOKENS[self.character], self.character, self.token_position
         )
         self._next_char()
         return True
 
-    def _try_build_complex_tokens(self) -> bool:
-        if self.character not in COMPLEX_TOKENS:
+    def _try_build_double_tokens(self) -> bool:
+        """Tries to build double or single character token"""
+        if self.character not in DOUBLE_TOKENS:
             return False
 
         first_char = self.character
         self._next_char()
-        if self.character == COMPLEX_TOKENS[first_char][0]:
+        if self.character == DOUBLE_TOKENS[first_char][0]:
             self.token = Token(
-                COMPLEX_TOKENS[first_char][2],
+                DOUBLE_TOKENS[first_char][2],
                 first_char + self.character,
                 self.token_position,
             )
             self._next_char()
         else:
             self.token = Token(
-                COMPLEX_TOKENS[first_char][1], first_char, self.token_position
+                DOUBLE_TOKENS[first_char][1], first_char, self.token_position
             )
         return True
 
     def _try_build_identifier_or__keyword_token(self) -> bool:
+        """Tries to build identifier or keyword token"""
         if not self.character.isalpha() or self.character == "_":
             return False
 
@@ -154,6 +167,7 @@ class Lexer:
         return True
 
     def _try_build_number_token(self) -> bool:
+        """Tries to build number: integer or decimal token"""
         if not self.character.isdecimal():
             return False
 
@@ -200,6 +214,7 @@ class Lexer:
         return True
 
     def _try_build_comment_token(self) -> bool:
+        """Tries to build comment token"""
         if self.character != "#":
             return False
         value = ""
@@ -215,6 +230,7 @@ class Lexer:
         return True
 
     def _try_build_string_token(self) -> bool:
+        """Tries to build string token"""
         if self.character != '"':
             return False
         value = ""
@@ -241,11 +257,13 @@ class Lexer:
         return True
 
     def _next_char(self) -> str:
+        """Reads next character from stream"""
         self.character = self.stream.read(1)
         self.position.column += 1
         return self.character
 
     def next_token(self) -> Token:
+        """Returns next token from stream"""
         while self._is_white():
             pass
 
@@ -253,8 +271,8 @@ class Lexer:
 
         if (
             self._try_build_eof()
-            or self._try_build_simple_tokens()
-            or self._try_build_complex_tokens()
+            or self._try_build_single_tokens()
+            or self._try_build_double_tokens()
             or self._try_build_identifier_or__keyword_token()
             or self._try_build_number_token()
             or self._try_build_comment_token()

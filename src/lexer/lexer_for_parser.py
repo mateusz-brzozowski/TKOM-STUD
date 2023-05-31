@@ -1,6 +1,6 @@
 from io import TextIOBase
 
-from error.error_manager import LexerErrorManager
+from error.error_manager import ErrorManager
 from lexer.lexer import Lexer
 from lexer.token_manager import Token, TokenType
 
@@ -9,7 +9,7 @@ class LexerForParser(Lexer):
     def __init__(
         self,
         stream: TextIOBase,
-        error_manager: LexerErrorManager,
+        error_manager: ErrorManager,
         max_identifier_length: int,
         max_string_length: int,
         max_int: int,
@@ -23,6 +23,7 @@ class LexerForParser(Lexer):
         )
 
     def next_token(self) -> Token:
+        """Returns next token except comments"""
         token = super().next_token()
         while token.token_type == TokenType.COMMENT:
             token = super().next_token()

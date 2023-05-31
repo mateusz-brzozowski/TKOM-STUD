@@ -1,7 +1,6 @@
 from parser.objects.type import (Bool, Canvas, Circle, Dec, Int, Polygon,
                                  Rectangle, Rhomb, Shape, Square, String,
                                  Trapeze, Triangle, Type)
-from typing import Dict, Tuple, Union
 
 from lexer.token_manager import TokenType
 
@@ -11,9 +10,8 @@ MAX_STRING_LENGTH: int = 200
 MAX_IDENTIFIER_LENGTH: int = 200
 NL_TYPES: list[str] = ["\n", "\r", "\r\n", "\n\r"]
 EOF_CHARS: list[str] = ["", None]
-VALUE_TYPE = Union[str, int, float, bool]
 
-SIMPLE_TOKENS: Dict[str, TokenType] = {
+SINGLE_TOKENS: dict[str, TokenType] = {
     "+": TokenType.ADD,
     "-": TokenType.SUBTRACT,
     "*": TokenType.MULTIPLY,
@@ -30,14 +28,14 @@ SIMPLE_TOKENS: Dict[str, TokenType] = {
     ".": TokenType.DOT,
 }
 
-COMPLEX_TOKENS: Dict[str, Tuple[str, TokenType, TokenType]] = {
+DOUBLE_TOKENS: dict[str, tuple[str, TokenType, TokenType]] = {
     ">": ("=", TokenType.GREATER, TokenType.GREATER_EQUAL),
     "<": ("=", TokenType.LESS, TokenType.LESS_EQUAL),
     "=": ("=", TokenType.ASSIGN, TokenType.EQUAL),
     "!": ("=", TokenType.NOT, TokenType.NOT_EQUAL),
 }
 
-KEYWORDS: Dict[str, TokenType] = {
+KEYWORDS: dict[str, TokenType] = {
     "and": TokenType.AND,
     "or": TokenType.OR,
     "not": TokenType.NOT,
@@ -64,7 +62,7 @@ KEYWORDS: Dict[str, TokenType] = {
     "for": TokenType.FOR,
 }
 
-DECLARATION_TYPES: Dict[TokenType, Type] = {
+DECLARATION_TYPES: dict[TokenType, Type] = {
     TokenType.INTEGER: Int,
     TokenType.DECIMAL: Dec,
     TokenType.BOOL: Bool,

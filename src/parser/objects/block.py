@@ -1,5 +1,6 @@
-from parser.objects.statement import Statement
 from parser.objects.node import Node
+from parser.objects.statement import Statement
+
 
 class Block(Node):
     statements: list[Statement]

@@ -43,20 +43,20 @@ class UnterminatedStringError(LexerError):
         super().__init__(f"Unterminated string. : [{value}]", position)
 
 
+class InvalidNewLineSymbolError(LexerError):
+    def __init__(self, position: Position, value: str) -> None:
+        super().__init__(f"Invalid new line symbol. : [{value}]", position)
+
+
 class UnexpectedNewLineSymbolError(LexerError):
     def __init__(
         self, position: Position, value: str, exception: str = None
     ) -> None:
-        if exception is None:
-            super().__init__(
-                f"Unexpected new line symbol. : [{value}]", position
-            )
-        else:
-            super().__init__(
-                f"""Unexpected new line symbol. : [{value}]
-                    expected: [{exception}]""",
-                position,
-            )
+        super().__init__(
+            f"""Unexpected new line symbol. : [{value}]
+                expected: [{exception}]""",
+            position,
+        )
 
 
 class TooLongIdentifierError(LexerError):
