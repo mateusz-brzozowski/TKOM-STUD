@@ -118,6 +118,7 @@ class CallExpression(Expression):
         output += f"] <{self.position}>"
         return output
 
+
 class IdentifierExpression(Expression):
     def __init__(self, position, identifier) -> None:
         super().__init__(position)

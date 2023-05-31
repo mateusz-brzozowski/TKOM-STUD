@@ -1,12 +1,26 @@
 from io import TextIOBase
-from lexer.lexer import Lexer
+
 from error.error_manager import LexerErrorManager
+from lexer.lexer import Lexer
 from lexer.token_manager import Token, TokenType
 
-class LexerForParser(Lexer):
-    def __init__(self, stream: TextIOBase, error_manager: LexerErrorManager) -> None:
-        super().__init__(stream, error_manager)
 
+class LexerForParser(Lexer):
+    def __init__(
+        self,
+        stream: TextIOBase,
+        error_manager: LexerErrorManager,
+        max_identifier_length: int,
+        max_string_length: int,
+        max_int: int,
+    ) -> None:
+        super().__init__(
+            stream,
+            error_manager,
+            max_identifier_length,
+            max_string_length,
+            max_int,
+        )
 
     def next_token(self) -> Token:
         token = super().next_token()

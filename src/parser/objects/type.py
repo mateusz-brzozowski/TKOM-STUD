@@ -52,130 +52,179 @@ class Shape(Type):
 
 
 class Circle(Shape):
-    r: Union[int, float]
+    radius: Union[int, float]
 
-    def __init__(self, x, y, r) -> None:
+    def __init__(self, x, y, radius) -> None:
         super().__init__(x, y)
-        self.r = r
+        self.radius = radius
 
     def __str__(self) -> str:
         return "Circle"
 
     def area(self) -> Union[int, float]:
-        return self.r * self.r * math.pi
+        return self.radius * self.radius * math.pi
 
     def perimeter(self) -> Union[int, float]:
-        return 2 * self.r * math.pi
+        return 2 * self.radius * math.pi
 
     def d(self) -> Union[int, float]:
-        return 2 * self.r
+        return 2 * self.radius
+
+    def r(self) -> Union[int, float]:
+        return self.radius
 
     def display(self) -> None:
-        return patches.Circle((self.x, self.y), radius=self.r, color=numpy.random.rand(3,))
+        return patches.Circle((self.x, self.y), radius=self.radius, color=numpy.random.rand(3,))
 
 class Square(Shape):
-    a: Union[int, float]
+    side_a: Union[int, float]
 
-    def __init__(self, x, y, a) -> None:
+    def __init__(self, x, y, side_a) -> None:
         super().__init__(x, y)
-        self.a = a
+        self.side_a = side_a
 
     def __str__(self) -> str:
         return "Square"
 
     def area(self) -> Union[int, float]:
-        return self.a * self.a
+        return self.side_a * self.side_a
 
     def perimeter(self) -> float:
-        return float(4 * self.a)
+        return float(4 * self.side_a)
 
     def d(self) -> Union[int, float]:
-        return math.sqrt(2) * self.a
+        return math.sqrt(2) * self.side_a
 
     def R(self) -> Union[int, float]:
         return self.d() / 2
 
     def r(self) -> Union[int, float]:
-        return self.a / 2
+        return self.side_a / 2
+
+    def a(self) -> Union[int, float]:
+        return self.side_a
 
     def display(self) -> None:
-        return patches.Rectangle((self.x, self.y), self.a, self.a, color=numpy.random.rand(3,))
+        return patches.Rectangle((self.x, self.y), self.side_a, self.side_a, color=numpy.random.rand(3,))
 
 
 class Rectangle(Shape):
-    a: Union[int, float]
-    b: Union[int, float]
+    side_a: Union[int, float]
+    side_b: Union[int, float]
 
-    def __init__(self, x, y, a, b) -> None:
+    def __init__(self, x, y, side_a, side_b) -> None:
         super().__init__(x, y)
-        self.a = a
-        self.b = b
+        self.side_a = side_a
+        self.side_b = side_b
 
     def __str__(self) -> str:
         return "Rectangle"
 
     def area(self) -> Union[int, float]:
-        return self.a * self.b
+        return self.side_a * self.side_b
 
     def perimeter(self) -> float:
-        return float(2 * (self.a + self.b))
+        return float(2 * (self.side_a + self.side_b))
 
     def d(self) -> Union[int, float]:
-        return math.sqrt(self.a * self.a + self.b * self.b)
+        return math.sqrt(self.side_a * self.side_a + self.side_b * self.b)
 
     def R(self) -> Union[int, float]:
         return self.d() / 2
 
+    def a(self) -> Union[int, float]:
+        return self.side_a
+
+    def b(self) -> Union[int, float]:
+        return self.side_b
+
     def display(self) -> None:
-        return patches.Rectangle((self.x, self.y), self.a, self.b, color=numpy.random.rand(3,))
+        return patches.Rectangle((self.x, self.y), self.side_a, self.side_b, color=numpy.random.rand(3,))
 
 
 class Triangle(Shape):
-    a: Union[int, float]
-    b: Union[int, float]
-    alfa: int
+    side_a: Union[int, float]
+    side_b: Union[int, float]
+    angle_alfa: int
 
-    def __init__(self, x, y, a, b, alfa) -> None:
+    def __init__(self, x, y, side_a, side_b, angle_alfa) -> None:
         super().__init__(x, y)
-        self.a = a
-        self.b = b
-        self.alfa = alfa * (math.pi / 180)
+        self.side_a = side_a
+        self.side_b = side_b
+        self.angle_alfa = angle_alfa * (math.pi / 180)
 
     def __str__(self) -> str:
         return "Triangle"
 
     def area(self) -> Union[int, float]:
-        return (self.a * self.b * math.sin(self.alfa)) / 2
+        return (self.side_a * self.side_b * math.sin(self.angle_alfa)) / 2
 
     def perimeter(self) -> Union[int, float]:
-        return self.a + self.b + math.sqrt(self.a * self.a + self.b * self.b - 2 * self.a * self.b * math.cos(self.alfa))
+        return self.side_a + self.side_b + math.sqrt(self.side_a * self.side_a + self.side_b * self.side_b - 2 * self.side_a * self.side_b * math.cos(self.angle_alfa))
 
     def h(self) -> Union[int, float]:
-        return self.b * math.sin(self.alfa)
+        return self.side_b * math.sin(self.angle_alfa)
+
+    def R(self) -> Union[int, float]:
+        return (self.a() * self.b() * self.c()) / (4 * self.area())
+
+    def r(self) -> Union[int, float]:
+        return self.area() / (self.perimeter() / 2)
+
+    def a(self) -> Union[int, float]:
+        return self.side_a
+
+    def b(self) -> Union[int, float]:
+        return self.side_b
+
+    def c(self) -> Union[int, float]:
+        return math.sqrt(self.side_a * self.side_a + self.side_b * self.side_b - 2 * self.side_a * self.side_b * math.cos(self.angle_alfa))
+
+    def alfa(self) -> Union[int, float]:
+        return self.angle_alfa * (math.pi / 180)
+
+    def beta(self) -> Union[int, float]:
+        return math.asin(self.b() * math.sin(self.alfa()) / self.c()) * (math.pi / 180)
+
+    def gamma(self) -> Union[int, float]:
+        return math.pi - self.alfa() - self.beta() * (math.pi / 180)
 
     def display(self) -> None:
-        return patches.Polygon([[self.x, self.y], [self.x + self.a, self.y], [self.x + self.b * math.cos(self.alfa), self.y + self.b * math.sin(self.alfa)]], color=numpy.random.rand(3,))
+        return patches.Polygon([[self.x, self.y], [self.x + self.a, self.y], [self.x + self.side_b * math.cos(self.angle_alfa), self.y + self.h()]], color=numpy.random.rand(3,))
+
 
 class Rhomb(Shape):
-    a: Union[int, float]
-    alfa: int
+    side_a: Union[int, float]
+    angle_alfa: int
 
-    def __init__(self, x, y, a, alfa) -> None:
+    def __init__(self, x, y, side_a, angle_alfa) -> None:
         super().__init__(x, y)
-        self.a = a
-        self.alfa = alfa * (math.pi / 180)
+        self.side_a = side_a
+        self.angle_alfa = angle_alfa * (math.pi / 180)
 
     def __str__(self) -> str:
         return "Rhomb"
 
     def area(self) -> Union[int, float]:
-        return self.a * self.a * math.sin(self.alfa)
+        return self.side_a * self.side_a * math.sin(self.angle_alfa)
 
     def perimeter(self) -> Union[int, float]:
-        return 4 * self.a
+        return 4 * self.side_a
+
+    def a(self) -> Union[int, float]:
+        return self.side_a
+
+    def alfa(self) -> Union[int, float]:
+        return self.angle_alfa * (math.pi / 180)
+
+    def e(self) -> Union[int, float]:
+        return self.a() / 2
+
+    def r(self) -> Union[int, float]:
+        return self.a() * math.sin(self.alfa()) / 2
 
     def display(self) -> None:
-        return patches.Polygon([[self.x, self.y], [self.x + self.a, self.y], [self.x + self.a + self.a * math.cos(self.alfa), self.y + self.a * math.sin(self.alfa)], [self.x + self.a * math.cos(self.alfa), self.y + self.a * math.sin(self.alfa)]], color=numpy.random.rand(3,))
+        return patches.Polygon([[self.x, self.y], [self.x + self.side_a, self.y], [self.x + self.side_a + self.side_a * math.cos(self.angle_alfa), self.y + self.side_a * math.sin(self.angle_alfa)], [self.x + self.side_a * math.cos(self.angle_alfa), self.y + self.side_a * math.sin(self.angle_alfa)]], color=numpy.random.rand(3,))
 
 
 class Trapeze(Shape):

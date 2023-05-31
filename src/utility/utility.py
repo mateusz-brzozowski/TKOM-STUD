@@ -1,46 +1,33 @@
+from parser.objects.type import (Bool, Canvas, Circle, Dec, Int, Polygon,
+                                 Rectangle, Rhomb, Shape, Square, String,
+                                 Trapeze, Triangle, Type)
 from typing import Dict, Tuple, Union
 
 from lexer.token_manager import TokenType
-from parser.objects.type import (
-    Type,
-    Int,
-    Dec,
-    Bool,
-    String,
-    Shape,
-    Circle,
-    Square,
-    Rectangle,
-    Triangle,
-    Rhomb,
-    Trapeze,
-    Polygon,
-    Canvas
-)
 
-MAX_INT: int = 2 ** 31 - 1
-MAX_FLOAT: int = 2 ** 31 - 1
+MAX_INT: int = 2**31 - 1
+MAX_FLOAT: int = 2**31 - 1
 MAX_STRING_LENGTH: int = 200
 MAX_IDENTIFIER_LENGTH: int = 200
-EOF_TYPES: list[str] = ['\n', '\r']
-EOF_CHARS: list[str] = ['', None]
+NL_TYPES: list[str] = ["\n", "\r", "\r\n", "\n\r"]
+EOF_CHARS: list[str] = ["", None]
 VALUE_TYPE = Union[str, int, float, bool]
 
 SIMPLE_TOKENS: Dict[str, TokenType] = {
-    '+': TokenType.ADD,
-    '-': TokenType.SUBTRACT,
-    '*': TokenType.MULTIPLY,
-    '/': TokenType.DIVIDE,
-    '(': TokenType.START_ROUND,
-    ')': TokenType.STOP_ROUND,
-    '[': TokenType.START_SQUARE,
-    ']': TokenType.STOP_SQUARE,
-    '{': TokenType.START_CURLY,
-    '}': TokenType.STOP_CURLY,
-    ';': TokenType.SEMICOLON,
-    ':': TokenType.COLON,
-    ',': TokenType.COMMA,
-    '.': TokenType.DOT,
+    "+": TokenType.ADD,
+    "-": TokenType.SUBTRACT,
+    "*": TokenType.MULTIPLY,
+    "/": TokenType.DIVIDE,
+    "(": TokenType.START_ROUND,
+    ")": TokenType.STOP_ROUND,
+    "[": TokenType.START_SQUARE,
+    "]": TokenType.STOP_SQUARE,
+    "{": TokenType.START_CURLY,
+    "}": TokenType.STOP_CURLY,
+    ";": TokenType.SEMICOLON,
+    ":": TokenType.COLON,
+    ",": TokenType.COMMA,
+    ".": TokenType.DOT,
 }
 
 COMPLEX_TOKENS: Dict[str, Tuple[str, TokenType, TokenType]] = {
@@ -90,7 +77,7 @@ DECLARATION_TYPES: Dict[TokenType, Type] = {
     TokenType.RHOMB: Rhomb,
     TokenType.TRAPEZE: Trapeze,
     TokenType.POLYGON: Polygon,
-    TokenType.CANVAS: Canvas
+    TokenType.CANVAS: Canvas,
 }
 
 RELATIVE_OPERATORS: list[TokenType] = [
@@ -125,15 +112,15 @@ LITERAL_TYPES: dict[Type, type] = {
 }
 
 OBJECT_TYPES: dict[Type, type] = {
-    "Shape" : Shape,
-    "Circle" : Circle,
-    "Square" : Square,
-    "Rectangle" : Rectangle,
-    "Triangle" : Triangle,
-    "Rhomb" : Rhomb,
-    "Trapeze" : Trapeze,
-    "Polygon" : Polygon,
-    "Canvas" : Canvas
+    "Shape": Shape,
+    "Circle": Circle,
+    "Square": Square,
+    "Rectangle": Rectangle,
+    "Triangle": Triangle,
+    "Rhomb": Rhomb,
+    "Trapeze": Trapeze,
+    "Polygon": Polygon,
+    "Canvas": Canvas,
 }
 
 
@@ -146,4 +133,4 @@ class Position:
         self.column = column
 
     def __str__(self) -> str:
-        return f"({self.line}, {self.column})"
+        return f"{self.line}, {self.column}"
