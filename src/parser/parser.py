@@ -125,6 +125,7 @@ class Parser:
             self.lexer.next_token()
             argument_dec = self._parse_argument_dec()
             if argument_dec is None:
+                argument_dec = [0, 0]
                 self.error_manager.add_error(
                     MissingArgumentError(
                         self.lexer.token.position, self.lexer.token.value
@@ -254,6 +255,7 @@ class Parser:
         argument_dec = self._parse_argument_dec()
 
         if argument_dec is None:
+            argument_dec = [0, 0]
             self.error_manager.add_error(
                 MissingArgumentError(
                     self.lexer.token.position, self.lexer.token.value

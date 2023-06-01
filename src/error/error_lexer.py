@@ -1,9 +1,11 @@
+from copy import deepcopy
+
 from utility.utility import Position
 
 
 class LexerError(Exception):
     def __init__(self, message: str, position: Position) -> None:
-        self.position = position
+        self.position = deepcopy(position)
         self.message = message
 
     def __str__(self) -> str:

@@ -1,38 +1,46 @@
+from inspect import signature
 from parser.objects.block import Block
 from parser.objects.expression import (AndExpression, BooleanExpression,
                                        CallExpression, CastExpression,
-                                       DecimalExpression, IdentifierExpression,
-                                       IntegerExpression, LogicalExpression,
-                                       MulExpression, NegatedExpression,
-                                       OrExpression, RelativeExpression,
-                                       StringExpression, SumExpression)
+                                       DecimalExpression, Expression,
+                                       IdentifierExpression, IntegerExpression,
+                                       LogicalExpression, MulExpression,
+                                       NegatedExpression, OrExpression,
+                                       RelativeExpression, StringExpression,
+                                       SumExpression)
 from parser.objects.function import Function
 from parser.objects.program import Program
 from parser.objects.statement import (AssignmentStatement,
                                       DeclarationStatement, IfStatement,
                                       IterateStatement, ReturnStatement,
                                       WhileStatement)
-from parser.objects.type import Dec, Int, Type
+from parser.objects.type import Canvas, Dec, Int, Shape, Type
 from parser.parser import Parser
 
-from error.error_interpreter import (InvalidAssignmentTypeError,
+from error.error_interpreter import (DivisionByZeroError,
+                                     InvalidAssignmentTypeError,
                                      InvalidDeclarationTypeError,
+                                     InvalidIterableTypeError,
                                      InvalidReturnTypeError,
                                      InvalidUnaryOperatorError,
+                                     MaximumRecursionDepthError,
+                                     MismatchedTypeError,
                                      MissingAssignmentValueError,
                                      MissingDeclarationValueError,
                                      MissingForConditionError,
+                                     MissingFunctionDeclarationError,
                                      MissingIfConditionError,
+                                     MissingMainFunctionError,
                                      MissingReturnTypeError,
                                      MissingReturnValueError,
                                      MissingVariableDeclarationError,
                                      MissingWhileConditionError,
-                                     NumberOfArgumentError)
+                                     NumberOfArgumentError, RedeclarationError)
 from interpreter.environment import Environment
 from interpreter.variable import Variable
 from interpreter.visitor import Visitor
 from lexer.token_manager import TokenType
-from utility.utility import LITERAL_TYPES, OBJECT_TYPES
+from utility.utility import LITERAL_TYPES, MAX_REC_DEPTH, OBJECT_TYPES
 
 
 class Interpreter(Visitor):
@@ -40,15 +48,18 @@ class Interpreter(Visitor):
     environment: Environment
     return_value: Type
     is_return: bool
+    max_rec_depth: int
 
-    def __init__(self, parser: Parser) -> None:
+    def __init__(
+        self, parser: Parser, max_rec_depth: int = MAX_REC_DEPTH
+    ) -> None:
         self.parser = parser
         self.return_value = None
         self.is_return = False
+        self.max_rec_depth = max_rec_depth
 
     def interpret(self):
         tree = self.parser.parse_program()
-        print(tree)
         self.environment = Environment()
         self.visit(tree)
 
@@ -62,6 +73,8 @@ class Interpreter(Visitor):
                 main_function.position, None, main_function.name, []
             )
             self._visit_CallExpression(main_call)
+        else:
+            MissingMainFunctionError(program.position)
 
     def _visit_Function(self, function: Function):
         self.environment.add_function(function)
@@ -94,7 +107,15 @@ class Interpreter(Visitor):
             return
         if iterate_statement.expression is None:
             raise MissingForConditionError(iterate_statement.position)
+        if iterate_statement.type != Shape:
+            raise InvalidIterableTypeError(
+                iterate_statement.position, iterate_statement.type, Shape
+            )
         value = self._get_value(self.visit(iterate_statement.expression))
+        if type(value) != Canvas:
+            raise InvalidIterableTypeError(
+                iterate_statement.position, type(value), Canvas
+            )
         shapes = getattr(value, "shapes")
         self.environment.create_local_scope()
         self.environment.add_variable(
@@ -132,9 +153,23 @@ class Interpreter(Visitor):
         if declaration_type in LITERAL_TYPES:
             declaration_type = LITERAL_TYPES[declaration_type]
 
-        if declaration_type != type(value):
+        if value is None:
+            raise InvalidDeclarationTypeError(
+                declaration_statement.position, None, declaration_type
+            )
+        elif type(value) == tuple:
+            raise MissingFunctionDeclarationError(
+                declaration_statement.position, value[0]
+            )
+        elif declaration_type != type(value):
             raise InvalidDeclarationTypeError(
                 declaration_statement.position, type(value), declaration_type
+            )
+
+        if self.environment.has_variable(declaration_statement.identifier):
+            raise RedeclarationError(
+                declaration_statement.position,
+                declaration_statement.identifier,
             )
 
         self.environment.add_variable(
@@ -158,6 +193,10 @@ class Interpreter(Visitor):
                     assignment_statement.position, type(value), variable.type
                 )
             self.environment.set_value(name, value)
+        else:
+            raise MissingVariableDeclarationError(
+                assignment_statement.position, name
+            )
 
     def _visit_FunctionCall(self, function_call: CallExpression) -> None:
         name = function_call.called_expression
@@ -184,6 +223,11 @@ class Interpreter(Visitor):
 
         self.environment.create_function_local_scope(variables)
 
+        if self.environment.get_recursion_depth() > self.max_rec_depth:
+            raise MaximumRecursionDepthError(
+                function_call.position, self.max_rec_depth, name
+            )
+
         return_value = None
         self.visit(function.block)
 
@@ -209,7 +253,7 @@ class Interpreter(Visitor):
             return self._execute_print(method_call.arguments)
         elif name in OBJECT_TYPES:
             return self._create_object(
-                OBJECT_TYPES[name], method_call.arguments
+                OBJECT_TYPES[name], method_call.arguments, method_call
             )
         return (method_call.called_expression, method_call.arguments)
 
@@ -217,6 +261,8 @@ class Interpreter(Visitor):
         root = self._get_value(self.visit(variable_call.root_expression))
         name, arguments = self.visit(variable_call.called_expression)
         function = getattr(root, name, self._not_existing_function)
+        if function == self._not_existing_function:
+            raise MissingFunctionDeclarationError(variable_call.position, name)
         argument_values = [
             self._get_value(self.visit(argument)) for argument in arguments
         ]
@@ -246,7 +292,7 @@ class Interpreter(Visitor):
             )
             return variable
         else:
-            MissingVariableDeclarationError(
+            raise MissingVariableDeclarationError(
                 identifier_expression.position,
                 identifier_expression.identifier,
             )
@@ -289,7 +335,13 @@ class Interpreter(Visitor):
         left = self._get_value(self.visit(logical_expression.left))
         right = self._get_value(self.visit(logical_expression.right))
         operator = logical_expression.operator
-        return self._get_operator_function(operator)(left, right)
+        if type(left) != type(right):
+            raise MismatchedTypeError(
+                logical_expression.position, type(left), type(right), operator
+            )
+        return self._get_operator_function(operator)(
+            left, right, logical_expression
+        )
 
     def _execute_print(self, expressions: list) -> None:
         output = ""
@@ -297,10 +349,19 @@ class Interpreter(Visitor):
             output += str(self._get_value(self.visit(expression)))
         print(output)
 
-    def _create_object(self, object_type: Type, arguments: list) -> any:
+    def _create_object(
+        self, object_type: Type, arguments: list, expression: Expression
+    ) -> any:
         argument_values = [
             self._get_value(self.visit(argument)) for argument in arguments
         ]
+        if len(argument_values) != len(signature(object_type).parameters):
+            raise NumberOfArgumentError(
+                expression.position,
+                object_type.__name__,
+                argument_values,
+                signature(object_type).parameters,
+            )
         return object_type(*argument_values)
 
     def _get_operator_function(self, operator: str):
@@ -328,8 +389,8 @@ class Interpreter(Visitor):
 
     def _get_cast_function(self, cast_type: Type):
         cast_functions = {
-            Int: self.accept_int,
-            Dec: self.accept_dec,
+            Int: self._accept_int,
+            Dec: self._accept_dec,
         }
         return cast_functions[cast_type]
 
@@ -355,56 +416,73 @@ class Interpreter(Visitor):
     ) -> any:
         value = self.visit(negative_expression.expression)
         if negative_expression.operator == "not":
-            return not value
+            if type(value) == bool:
+                return not value
         elif negative_expression.operator == "-":
-            return -value
-        else:
-            raise InvalidUnaryOperatorError(
-                negative_expression.position, negative_expression.operator
-            )
+            if type(value) in [int, float]:
+                return -value
+        raise InvalidUnaryOperatorError(
+            negative_expression.position, negative_expression.operator
+        )
 
-    def _accept_or(self, left: any, right: any) -> bool:
-        if type(left) != bool or type(right) != bool:
-            raise Exception(
-                f"Expected bool but got {type(left)} and {type(right)}"
-            )
+    def _accept_or(
+        self, left: any, right: any, expression: Expression
+    ) -> bool:
         return left or right
 
     def _accept_and(self, left: any, right: any) -> bool:
-        if type(left) != bool or type(right) != bool:
-            raise Exception(
-                f"Expected bool but got {type(left)} and {type(right)}"
-            )
         return left and right
 
-    def _accept_equal(self, left: any, right: any) -> bool:
+    def _accept_equal(
+        self, left: any, right: any, expression: Expression
+    ) -> bool:
         return left == right
 
-    def _accept_not_equal(self, left: any, right: any) -> bool:
+    def _accept_not_equal(
+        self, left: any, right: any, expression: Expression
+    ) -> bool:
         return left != right
 
-    def _accept_greater(self, left: any, right: any) -> bool:
+    def _accept_greater(
+        self, left: any, right: any, expression: Expression
+    ) -> bool:
         return left > right
 
-    def _accept_less(self, left: any, right: any) -> bool:
+    def _accept_less(
+        self, left: any, right: any, expression: Expression
+    ) -> bool:
         return left < right
 
-    def _accept_greater_equal(self, left: any, right: any) -> bool:
+    def _accept_greater_equal(
+        self, left: any, right: any, expression: Expression
+    ) -> bool:
         return left >= right
 
-    def _accept_less_equal(self, left: any, right: any) -> bool:
+    def _accept_less_equal(
+        self, left: any, right: any, expression: Expression
+    ) -> bool:
         return left <= right
 
-    def _accept_add(self, left: any, right: any) -> any:
+    def _accept_add(
+        self, left: any, right: any, expression: Expression
+    ) -> any:
         return left + right
 
-    def _accept_sub(self, left: any, right: any) -> any:
+    def _accept_sub(
+        self, left: any, right: any, expression: Expression
+    ) -> any:
         return left - right
 
-    def _accept_mul(self, left: any, right: any) -> any:
+    def _accept_mul(
+        self, left: any, right: any, expression: Expression
+    ) -> any:
         return left * right
 
-    def _accept_div(self, left: any, right: any) -> any:
+    def _accept_div(
+        self, left: any, right: any, expression: Expression
+    ) -> any:
+        if right == 0:
+            raise DivisionByZeroError(expression.position)
         return left / right
 
     def _accept_int(self, value: float) -> int:

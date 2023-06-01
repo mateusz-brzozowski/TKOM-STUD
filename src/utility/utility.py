@@ -10,6 +10,7 @@ MAX_STRING_LENGTH: int = 200
 MAX_IDENTIFIER_LENGTH: int = 200
 NL_TYPES: list[str] = ["\n", "\r", "\r\n", "\n\r"]
 EOF_CHARS: list[str] = ["", None]
+MAX_REC_DEPTH: int = 100
 
 SINGLE_TOKENS: dict[str, TokenType] = {
     "+": TokenType.ADD,
@@ -119,6 +120,23 @@ OBJECT_TYPES: dict[Type, type] = {
     "Trapeze": Trapeze,
     "Polygon": Polygon,
     "Canvas": Canvas,
+}
+
+ALL_TYPES: dict[type, str] = {
+    int: "int",
+    float: "dec",
+    bool: "bool",
+    str: "String",
+    Shape: "Shape",
+    Circle: "Circle",
+    Square: "Square",
+    Rectangle: "Rectangle",
+    Triangle: "Triangle",
+    Rhomb: "Rhomb",
+    Trapeze: "Trapeze",
+    Polygon: "Polygon",
+    Canvas: "Canvas",
+    None: "None"
 }
 
 

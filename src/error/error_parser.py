@@ -1,10 +1,12 @@
-from utility.utility import Position
+from copy import deepcopy
+
 from lexer.token_manager import TokenType
+from utility.utility import Position
 
 
 class ParserError(Exception):
     def __init__(self, message: str, position: Position) -> None:
-        self.position = position
+        self.position = deepcopy(position)
         self.message = message
 
     def __str__(self) -> str:
@@ -19,7 +21,7 @@ class UnexpectedTokenError(ParserError):
         expected: TokenType,
     ) -> None:
         super().__init__(
-            f"""Unexpected token. : [{token}] expected: [{expected}]""",
+            f"""Unexpected token. : [{token.value}] expected: [{expected.value}]""",
             position,
         )
 
