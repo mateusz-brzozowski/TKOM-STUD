@@ -431,7 +431,7 @@ class Polygon(Shape):
 
     def area(self) -> float:
         return float(self.n * self.side_a * self.side_a) / (
-            4 * math.tan(math.pi / self.n)
+            4 * math.tan(math.pi / self.num_n)
         )
 
     def perimeter(self) -> float:
@@ -452,7 +452,7 @@ class Polygon(Shape):
     def display(self) -> None:
         return patches.RegularPolygon(
             (self.x, self.y),
-            self.n,
+            self.num_n,
             self.side_a,
             color=numpy.random.rand(
                 3,

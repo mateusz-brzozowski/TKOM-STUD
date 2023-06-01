@@ -2,10 +2,10 @@ def main() {
     Triangle t = Triangle(0, 0, 3, 4, 55);
     print(t.area());
 
-    Rectangle r = Rectangle(0, 0, 5);
+    Rectangle r = Rectangle(0, 0, 5, 4);
     print(r.perimeter());
 
-    Square s = Square(0, 0, 5, 4);
+    Square s = Square(0, 0, 5);
     print(s.d());
 
     s.move(2, 3);

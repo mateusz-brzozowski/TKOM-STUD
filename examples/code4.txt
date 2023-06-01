@@ -1,8 +1,9 @@
-def Square gasket(int x, int y, dec dim, Canvas c){
-    dec new_dim = dim - 2.0;
-    if ( dim < 8) {
+def Square gasket(dec x, dec y, dec dim, Canvas c){
+    if ( dim < 8.0) {
         return Square(x, y, dim);
     } else {
+        dec new_dim = dim / 2.0;
+        print(new_dim);
         gasket(x, y, new_dim, c);
         gasket(x + new_dim, y, new_dim, c);
         gasket(x + new_dim, y + new_dim, new_dim, c);
@@ -22,7 +23,7 @@ def printInformation(Shape shape){
 
 def main(){
     Canvas c = Canvas();
-    c.push(gasket(0,0, 6.0, c));
+    c.push(gasket(0.0, 0.0, 248.0, c));
     c.display();
     Triangle t = getTriangle(0, 10, 20, 30);
 

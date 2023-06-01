@@ -7,7 +7,7 @@ def main(){
 
     dec suma = 0.0;
 
-    if ( s.area() != 2.5 or r_per == 2) {
+    if ( s.area() != 2.5 or r_per == 2.0) {
         print(s.d());
     }
 

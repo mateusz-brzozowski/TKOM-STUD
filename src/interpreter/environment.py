@@ -13,7 +13,7 @@ class Environment:
     def __init__(self) -> None:
         self.function_scope: Scope = Scope()
         self.local_scope: Scope = Scope()
-        self.last_scope: Scope = Scope()
+        self.last_scope: list[Scope] = []
         self.recursion_depth: int = 0
 
     def add_function(self, function: Function) -> None:
@@ -32,14 +32,14 @@ class Environment:
         self.local_scope = self.local_scope.parent_scope
 
     def create_function_local_scope(self, variables: list[Variable]) -> None:
-        self.last_scope = self.local_scope
+        self.last_scope.append(self.local_scope)
         self.local_scope = Scope()
         for variable in variables:
             self.local_scope.add_variable(variable)
         self.recursion_depth += 1
 
     def destroy_function_local_scope(self) -> None:
-        self.local_scope = self.last_scope
+        self.local_scope = self.last_scope.pop()
         self.recursion_depth -= 1
 
     def get_recursion_depth(self) -> int:

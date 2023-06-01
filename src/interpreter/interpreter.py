@@ -74,7 +74,7 @@ class Interpreter(Visitor):
             )
             self._visit_CallExpression(main_call)
         else:
-            MissingMainFunctionError(program.position)
+            MissingMainFunctionError(main_function.position)
 
     def _visit_Function(self, function: Function):
         self.environment.add_function(function)
@@ -414,7 +414,7 @@ class Interpreter(Visitor):
     def _visit_NegatedExpression(
         self, negative_expression: NegatedExpression
     ) -> any:
-        value = self.visit(negative_expression.expression)
+        value = self._get_value(self.visit(negative_expression.expression))
         if negative_expression.operator == "not":
             if type(value) == bool:
                 return not value
@@ -430,7 +430,9 @@ class Interpreter(Visitor):
     ) -> bool:
         return left or right
 
-    def _accept_and(self, left: any, right: any) -> bool:
+    def _accept_and(
+        self, left: any, right: any, expression: Expression
+    ) -> bool:
         return left and right
 
     def _accept_equal(
