@@ -54,7 +54,7 @@ class Lexer:
                 self.position.column = 0
                 self._next_char()
                 return True
-            elif self.character.isspace():
+            elif self.character.isspace() and self.character not in NL_TYPES:
                 self._next_char()
                 return True
             else:
