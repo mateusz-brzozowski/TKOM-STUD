@@ -20,6 +20,7 @@ class InvalidReturnTypeError(InterpreterError):
         super().__init__(
             f"Invalid return type. : [{ALL_TYPES[value]}] "
             f"expected: [{ALL_TYPES[expected]}]",
+            position
         )
 
 

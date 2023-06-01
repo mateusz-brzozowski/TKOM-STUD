@@ -6,6 +6,25 @@ from error.error_manager import ErrorManager
 from src.interpreter.interpreter import Interpreter
 from src.lexer.lexer import Lexer
 from src.parser.parser import Parser
+from error.error_interpreter import (DivisionByZeroError,
+                                     InvalidAssignmentTypeError,
+                                     InvalidDeclarationTypeError,
+                                     InvalidIterableTypeError,
+                                     InvalidReturnTypeError,
+                                     InvalidUnaryOperatorError,
+                                     MaximumRecursionDepthError,
+                                     MismatchedTypeError,
+                                     MissingAssignmentValueError,
+                                     MissingDeclarationValueError,
+                                     MissingForConditionError,
+                                     MissingFunctionDeclarationError,
+                                     MissingIfConditionError,
+                                     MissingMainFunctionError,
+                                     MissingReturnTypeError,
+                                     MissingReturnValueError,
+                                     MissingVariableDeclarationError,
+                                     MissingWhileConditionError,
+                                     NumberOfArgumentError, RedeclarationError)
 
 TEST_INTERPRETER_DATA: list[tuple[str, str]] = [
     (
@@ -280,10 +299,203 @@ TEST_INTERPRETER_DATA: list[tuple[str, str]] = [
 
 
 @pytest.mark.parametrize("stream,expected", TEST_INTERPRETER_DATA)
-def test_one_statement(stream, expected, capfd):
+def test_interpreter_accept(stream, expected, capfd):
     with io.StringIO(stream) as stream_input:
         lexer = Lexer(stream_input, ErrorManager())
         parser = Parser(lexer, ErrorManager())
         Interpreter(parser).interpret()
         out, err = capfd.readouterr()
         assert out == expected
+
+
+ERROR_INTERPRETER_DATA: list[tuple[str, ]] = [
+    (
+        '''
+        def main(){
+            int a = 1 / 0;
+        }
+        ''',
+        DivisionByZeroError,
+    ),
+    (
+        '''
+        def a(){
+            a();
+        }
+        def main(){
+            a();
+        }
+        ''',
+        MaximumRecursionDepthError,
+    ),
+    (
+        '''
+        def main(){
+            int a = 1.0;
+        }
+        ''',
+        InvalidDeclarationTypeError
+    ),
+    (
+        '''
+        def main(){
+            int a = 1;
+            a = 1.0;
+        }
+        ''',
+        InvalidAssignmentTypeError
+    ),
+    (
+        '''
+        def int a(){
+            return 1.0;
+        }
+        def main(){
+            a();
+        }
+        ''',
+        InvalidReturnTypeError
+    ),
+    (
+        '''
+        def main(){
+            bool b = not 1 or 1;
+        }
+        ''',
+        InvalidUnaryOperatorError
+    ),
+    (
+        '''
+        def main(){
+            int a = ;
+        }
+        ''',
+        MissingDeclarationValueError
+    ),
+    (
+        '''
+        def main(){
+            if(){
+
+            }
+        }
+        ''',
+        MissingIfConditionError
+    ),
+    (
+        '''
+        def main(){
+            for(){
+            }
+        }
+        ''',
+        MissingForConditionError
+    ),
+    (
+        '''
+        def main(){
+            while(){
+            }
+        }
+        ''',
+        MissingWhileConditionError
+    ),
+    (
+        '''
+        def main(){
+            return;
+        }
+        ''',
+        MissingReturnValueError
+    ),
+    (
+        '''
+        def int a(){
+            print("A");
+        }
+        def main(){
+            a();
+        }
+        ''',
+        MissingReturnTypeError
+    ),
+    (
+        '''
+        def main(){
+            Circle c = Circle(0,0);
+        }
+        ''',
+        NumberOfArgumentError
+    ),
+    (
+        '''
+        def a(){
+        }
+        ''',
+        MissingMainFunctionError
+    ),
+    (
+        '''
+        def main(){
+            if( 1 == 1.0){
+
+            }
+        }
+        ''',
+        MismatchedTypeError
+    ),
+    (
+        '''
+        def main(){
+            int c = 1;
+            for(Shape s : c){
+
+            }
+        }
+        ''',
+        InvalidIterableTypeError
+    ),
+    (
+        '''
+        def main(){
+            int a = 1;
+            int a = 2;
+        }
+        ''',
+        RedeclarationError
+    ),
+    (
+        '''
+        def main(){
+            print(a);
+        }
+        ''',
+        MissingVariableDeclarationError
+    ),
+    (
+        '''
+        def main(){
+            int a = 1;
+            a = ;
+        }
+        ''',
+        MissingAssignmentValueError
+    ),
+    (
+        '''
+        def main(){
+            int a = a();
+        }
+        ''',
+        MissingFunctionDeclarationError
+    )
+]
+
+
+@pytest.mark.parametrize("stream,expected", ERROR_INTERPRETER_DATA)
+def test_interpreter_error(stream, expected, capfd):
+    with io.StringIO(stream) as stream_input:
+        lexer = Lexer(stream_input, ErrorManager())
+        parser = Parser(lexer, ErrorManager())
+        with pytest.raises(expected):
+            Interpreter(parser).interpret()

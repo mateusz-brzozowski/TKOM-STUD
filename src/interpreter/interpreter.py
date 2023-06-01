@@ -40,7 +40,8 @@ from interpreter.environment import Environment
 from interpreter.variable import Variable
 from interpreter.visitor import Visitor
 from lexer.token_manager import TokenType
-from utility.utility import LITERAL_TYPES, MAX_REC_DEPTH, OBJECT_TYPES
+from utility.utility import (LITERAL_TYPES, MAX_REC_DEPTH, OBJECT_TYPES,
+                             Position)
 
 
 class Interpreter(Visitor):
@@ -74,7 +75,7 @@ class Interpreter(Visitor):
             )
             self._visit_CallExpression(main_call)
         else:
-            MissingMainFunctionError(main_function.position)
+            raise MissingMainFunctionError(Position(0, 0))
 
     def _visit_Function(self, function: Function):
         self.environment.add_function(function)
@@ -182,7 +183,7 @@ class Interpreter(Visitor):
         if self.is_return:
             return
         if assignment_statement.expression is None:
-            MissingAssignmentValueError(assignment_statement.position)
+            raise MissingAssignmentValueError(assignment_statement.position)
         value = self._get_value(self.visit(assignment_statement.expression))
         name = assignment_statement.identifier.identifier
 
