@@ -1,19 +1,19 @@
-def Square gasket(int x, int y, dec dim, Canvas c){
-    if ( dim < 8) {
+def Square gasket(dec x, dec y, dec dim, Canvas c){
+    if ( dim < 8.0) {
         return Square(x, y, dim);
     } else {
-        dec = new_dim = dim / 2;
-        gasket(x, y, new_dim);
-        gasket(x + new_dim, y, new_dim);
-        gasket(x + new_dim, y + new_dim, new_dim);
+        dec new_dim = dim / 2.0;
+        gasket(x, y, new_dim, c);
+        gasket(x + new_dim, y, new_dim, c);
+        gasket(x + new_dim, y + new_dim, new_dim, c);
     }
 }
 
-def Triangle getTriangle(int x, int y, int height, int width){
-    return Triangle(x, y, width / 2, height, 90);
+def Triangle getTriangle(dec x, dec y, dec height, dec width){
+    return Triangle(x, y, width / 2.0, height, 90.0);
 }
 
-def printInformation(Shape shape){
+def printInformation(Triangle shape){
     # pole
     print(shape.area());
     # obwód
@@ -22,9 +22,9 @@ def printInformation(Shape shape){
 
 def main(){
     Canvas c = Canvas();
-    c.add(gasket(0,0, 248));
+    c.push(gasket(0.0, 0.0, 248.0, c));
     c.display();
-    Triangle t = getTriangle(0, 10, 20, 30);
+    Triangle t = getTriangle(0.0, 10.0, 20.0, 30.0);
 
     printInformation(t);
 }

@@ -1,9 +1,11 @@
 from parser.objects.function import Function
+from parser.objects.node import Node
 
-class Program:
+
+class Program(Node):
     objects: list[Function]
 
-    def __init__(self, objects) -> None:
+    def __init__(self, objects: list[Function]) -> None:
         self.objects = objects
 
     def __str__(self) -> str:
