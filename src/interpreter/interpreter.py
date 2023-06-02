@@ -19,11 +19,13 @@ from parser.parser import Parser
 
 from error.error_interpreter import (DivisionByZeroError,
                                      InvalidAssignmentTypeError,
+                                     InvalidCallTypeError,
                                      InvalidDeclarationTypeError,
                                      InvalidIterableTypeError,
                                      InvalidReturnTypeError,
                                      InvalidUnaryOperatorError,
                                      MaximumRecursionDepthError,
+                                     MismatchedCallTypeError,
                                      MismatchedTypeError,
                                      MissingAssignmentValueError,
                                      MissingDeclarationValueError,
@@ -40,8 +42,8 @@ from interpreter.environment import Environment
 from interpreter.variable import Variable
 from interpreter.visitor import Visitor
 from lexer.token_manager import TokenType
-from utility.utility import (LITERAL_TYPES, MAX_REC_DEPTH, OBJECT_TYPES,
-                             Position)
+from utility.utility import (ALL_TYPES, LITERAL_TYPES, MAX_REC_DEPTH,
+                             OBJECT_TYPES, Position)
 
 
 class Interpreter(Visitor):
@@ -220,6 +222,13 @@ class Interpreter(Visitor):
             function_call.arguments, function.argument_list
         ):
             value = self._get_value(self.visit(argument))
+            if ALL_TYPES[type(value)] != ALL_TYPES[parameter[0]]:
+                raise MismatchedCallTypeError(
+                    function_call.position,
+                    type(value),
+                    parameter[0],
+                    function.name,
+                )
             variables.append(Variable(parameter[0], parameter[1], value))
 
         self.environment.create_function_local_scope(variables)
@@ -267,7 +276,10 @@ class Interpreter(Visitor):
         argument_values = [
             self._get_value(self.visit(argument)) for argument in arguments
         ]
-        return function(*argument_values)
+        try:
+            return function(*argument_values)
+        except Exception as e:
+            raise InvalidCallTypeError(variable_call.position, e)
 
     def _not_existing_function(self, name) -> Exception:
         raise Exception(f"Function {name} not found")
@@ -363,7 +375,10 @@ class Interpreter(Visitor):
                 argument_values,
                 signature(object_type).parameters,
             )
-        return object_type(*argument_values)
+        try:
+            return object_type(*argument_values)
+        except Exception as e:
+            raise InvalidCallTypeError(expression.position, e)
 
     def _get_operator_function(self, operator: str):
         operator_functions = {

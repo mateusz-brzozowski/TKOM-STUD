@@ -3,6 +3,7 @@ from io import TextIOBase
 from error.error_manager import ErrorManager
 from lexer.lexer import Lexer
 from lexer.token_manager import Token, TokenType
+from utility.utility import MAX_IDENTIFIER_LENGTH, MAX_INT, MAX_STRING_LENGTH
 
 
 class LexerForParser(Lexer):
@@ -10,9 +11,9 @@ class LexerForParser(Lexer):
         self,
         stream: TextIOBase,
         error_manager: ErrorManager,
-        max_identifier_length: int,
-        max_string_length: int,
-        max_int: int,
+        max_identifier_length: int = MAX_IDENTIFIER_LENGTH,
+        max_string_length: int = MAX_STRING_LENGTH,
+        max_int: int = MAX_INT,
     ) -> None:
         super().__init__(
             stream,

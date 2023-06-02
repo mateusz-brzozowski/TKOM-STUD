@@ -9,7 +9,7 @@ from error.error_parser import (ExistArgumentError, ExistFunctionError,
                                 MissingArgumentError, MissingExpressionError,
                                 MissingIdentifierError, UnexpectedTokenError)
 from src.error.error_manager import ErrorManager
-from src.lexer.lexer import Lexer
+from src.lexer.lexer_for_parser import LexerForParser
 from src.parser.objects.block import Block
 from src.parser.objects.expression import (AndExpression, BooleanExpression,
                                            CallExpression, CastExpression,
@@ -730,8 +730,7 @@ OneStatement = [
 def test_one_statement(stream, expected):
     main_stream = "def main() { \n" + stream + "\n }"
     with io.StringIO(main_stream) as stream_input:
-        lexer = Lexer(stream_input, ErrorManager())
-        lexer.position = Position(1, 1)
+        lexer = LexerForParser(stream_input, ErrorManager())
         parser = Parser(lexer, ErrorManager())
         output = parser.parse_program()
         output_class = output.objects[0].block.statements[0]
@@ -764,8 +763,7 @@ MultiStatement = [
 def test_multi_statement(stream, expected):
     main_stream = "def main() { \n" + stream + "\n }"
     with io.StringIO(main_stream) as stream_input:
-        lexer = Lexer(stream_input, ErrorManager())
-        lexer.position = Position(1, 1)
+        lexer = LexerForParser(stream_input, ErrorManager())
         parser = Parser(lexer, ErrorManager())
         output = parser.parse_program()
         output_string = ""
@@ -830,8 +828,7 @@ InvalidInput = [
 def test_errors_statement(stream, expected):
     main_stream = "def main() { \n" + stream + "\n }"
     with io.StringIO(main_stream) as stream_input:
-        lexer = Lexer(stream_input, ErrorManager())
-        lexer.position = Position(1, 1)
+        lexer = LexerForParser(stream_input, ErrorManager())
         parser = Parser(lexer, ErrorManager())
         parser.error_manager.errors = []
         parser.parse_program()
@@ -843,8 +840,7 @@ def test_function_exists_statement():
     def main() { }
     """
     with io.StringIO(main_stream) as stream_input:
-        lexer = Lexer(stream_input, ErrorManager())
-        lexer.position = Position(1, 1)
+        lexer = LexerForParser(stream_input, ErrorManager())
         parser = Parser(lexer, ErrorManager())
         parser.error_manager.errors = []
         parser.parse_program()
@@ -856,8 +852,7 @@ def test_argument_exists_statement():
     def main() { }
     """
     with io.StringIO(main_stream) as stream_input:
-        lexer = Lexer(stream_input, ErrorManager())
-        lexer.position = Position(1, 1)
+        lexer = LexerForParser(stream_input, ErrorManager())
         parser = Parser(lexer, ErrorManager())
         parser.error_manager.errors = []
         parser.parse_program()
@@ -869,8 +864,7 @@ def test_missing_argument_identifier_statement():
     def main() { }
     """
     with io.StringIO(main_stream) as stream_input:
-        lexer = Lexer(stream_input, ErrorManager())
-        lexer.position = Position(1, 1)
+        lexer = LexerForParser(stream_input, ErrorManager())
         parser = Parser(lexer, ErrorManager())
         parser.error_manager.errors = []
         parser.parse_program()
@@ -884,8 +878,7 @@ def test_missing_argument_error_statement():
     }
     """
     with io.StringIO(main_stream) as stream_input:
-        lexer = Lexer(stream_input, ErrorManager())
-        lexer.position = Position(1, 1)
+        lexer = LexerForParser(stream_input, ErrorManager())
         parser = Parser(lexer, ErrorManager())
         parser.error_manager.errors = []
         parser.parse_program()

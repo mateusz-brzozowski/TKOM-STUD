@@ -1,6 +1,5 @@
 import math
 from parser.objects.node import Node
-from typing import Union
 
 import numpy
 from matplotlib import patches
@@ -32,19 +31,27 @@ class String(Type):
 
 
 class Shape(Type):
-    x: Union[int, float]
-    y: Union[int, float]
+    x: float
+    y: float
 
     def __init__(
-        self, x: Union[int, float] = 0, y: Union[int, float] = 0
+        self, x: float = 0, y: float = 0
     ) -> None:
+        if not isinstance(x, float):
+            raise Exception("Shape(): 1. argument x must be dec")
+        if not isinstance(y, float):
+            raise Exception("Shape(): 2. argument y must be dec")
         self.x = x
         self.y = y
 
     def __str__(self) -> str:
         return "Shape"
 
-    def move(self, x, y) -> None:
+    def move(self, x: float, y: float) -> None:
+        if not isinstance(x, float):
+            raise Exception("move(): 1. argument x must be dec")
+        if not isinstance(y, float):
+            raise Exception("move(): 2. argument y must be dec")
         self.x += x
         self.y += y
 
@@ -59,13 +66,13 @@ class Shape(Type):
 
 
 class Circle(Shape):
-    radius: Union[int, float]
+    radius: float
 
     def __init__(
         self,
-        x: Union[int, float],
-        y: Union[int, float],
-        radius: Union[int, float],
+        x: float,
+        y: float,
+        radius: float,
     ) -> None:
         super().__init__(x, y)
         self.radius = radius
@@ -96,15 +103,17 @@ class Circle(Shape):
 
 
 class Square(Shape):
-    side_a: Union[int, float]
+    side_a: float
 
     def __init__(
         self,
-        x: Union[int, float],
-        y: Union[int, float],
-        side_a: Union[int, float],
+        x: float,
+        y: float,
+        side_a: float,
     ) -> None:
         super().__init__(x, y)
+        if not isinstance(side_a, float):
+            raise Exception("Square(): 1. argument side_a must be dec")
         self.side_a = side_a
 
     def __str__(self) -> str:
@@ -140,17 +149,21 @@ class Square(Shape):
 
 
 class Rectangle(Shape):
-    side_a: Union[int, float]
-    side_b: Union[int, float]
+    side_a: float
+    side_b: float
 
     def __init__(
         self,
-        x: Union[int, float],
-        y: Union[int, float],
-        side_a: Union[int, float],
-        side_b: Union[int, float],
+        x: float,
+        y: float,
+        side_a: float,
+        side_b: float,
     ) -> None:
         super().__init__(x, y)
+        if not isinstance(side_a, float):
+            raise Exception("Rectangle(): 1. argument side_a must be dec")
+        if not isinstance(side_b, float):
+            raise Exception("Rectangle(): 2. argument side_b must be dec")
         self.side_a = side_a
         self.side_b = side_b
 
@@ -189,19 +202,25 @@ class Rectangle(Shape):
 
 
 class Triangle(Shape):
-    side_a: Union[int, float]
-    side_b: Union[int, float]
-    angle_alfa: Union[int, float]
+    side_a: float
+    side_b: float
+    angle_alfa: float
 
     def __init__(
         self,
-        x: Union[int, float],
-        y: Union[int, float],
-        side_a: Union[int, float],
-        side_b: Union[int, float],
-        angle_alfa: Union[int, float],
+        x: float,
+        y: float,
+        side_a: float,
+        side_b: float,
+        angle_alfa: float,
     ) -> None:
         super().__init__(x, y)
+        if not isinstance(side_a, float):
+            raise Exception("Triangle(): 1. argument side_a must be dec")
+        if not isinstance(side_b, float):
+            raise Exception("Triangle(): 2. argument side_b must be dec")
+        if not isinstance(angle_alfa, float):
+            raise Exception("Triangle(): 3. argument angle_alfa must be dec")
         self.side_a = side_a
         self.side_b = side_b
         self.angle_alfa = angle_alfa * (math.pi / 180)
@@ -226,7 +245,7 @@ class Triangle(Shape):
         )
 
     def h(self) -> float:
-        return float(self.side_b * math.sin(self.angle_alfa))
+        return float(abs(self.side_b * math.sin(self.angle_alfa)))
 
     def R(self) -> float:
         return float((self.a() * self.b() * self.c()) / (4 * self.area()))
@@ -278,17 +297,21 @@ class Triangle(Shape):
 
 
 class Rhomb(Shape):
-    side_a: Union[int, float]
-    angle_alfa: Union[int, float]
+    side_a: float
+    angle_alfa: float
 
     def __init__(
         self,
-        x: Union[int, float],
-        y: Union[int, float],
-        side_a: Union[int, float],
-        angle_alfa: Union[int, float],
+        x: float,
+        y: float,
+        side_a: float,
+        angle_alfa: float,
     ) -> None:
         super().__init__(x, y)
+        if not isinstance(side_a, float):
+            raise Exception("Rhomb(): 1. argument side_a must be dec")
+        if not isinstance(angle_alfa, float):
+            raise Exception("Rhomb(): 2. argument angle_alfa must be dec")
         self.side_a = side_a
         self.angle_alfa = angle_alfa * (math.pi / 180)
 
@@ -342,21 +365,29 @@ class Rhomb(Shape):
 
 
 class Trapeze(Shape):
-    side_a: Union[int, float]
-    side_b: Union[int, float]
-    side_c: Union[int, float]
-    angle_alfa: Union[int, float]
+    side_a: float
+    side_b: float
+    side_c: float
+    angle_alfa: float
 
     def __init__(
         self,
-        x: Union[int, float],
-        y: Union[int, float],
-        side_a: Union[int, float],
-        side_b: Union[int, float],
-        side_c: Union[int, float],
+        x: float,
+        y: float,
+        side_a: float,
+        side_b: float,
+        side_c: float,
         angle_alfa: int,
     ) -> None:
         super().__init__(x, y)
+        if not isinstance(side_a, float):
+            raise Exception("Trapeze(): 1. argument side_a must be dec")
+        if not isinstance(side_b, float):
+            raise Exception("Trapeze(): 2. argument side_b must be dec")
+        if not isinstance(side_c, float):
+            raise Exception("Trapeze(): 3. argument side_c must be dec")
+        if not isinstance(angle_alfa, float):
+            raise Exception("Trapeze(): 4. argument angle_alfa must be dec")
         self.side_a = side_a
         self.side_b = side_b
         self.side_c = side_c
@@ -369,7 +400,7 @@ class Trapeze(Shape):
         return float((self.side_a + self.side_b) * self.h() / 2)
 
     def h(self) -> float:
-        return float(self.side_c * math.sin(self.angle_alfa))
+        return float(abs(self.side_c * math.sin(self.angle_alfa)))
 
     def a(self) -> float:
         return float(self.side_a)
@@ -412,17 +443,23 @@ class Trapeze(Shape):
 
 
 class Polygon(Shape):
-    side_a: Union[int, float]
+    side_a: float
     num_n: int
 
     def __init__(
         self,
-        x: Union[int, float],
-        y: Union[int, float],
-        side_a: Union[int, float],
+        x: float,
+        y: float,
+        side_a: float,
         num_n: int,
     ) -> None:
         super().__init__(x, y)
+        if not isinstance(side_a, float):
+            raise Exception("Polygon(): 1. argument side_a must be dec")
+        if not isinstance(num_n, int):
+            raise Exception("Polygon(): 2. argument num_n must be int")
+        if num_n < 3:
+            raise Exception("Polygon(): 2. argument num_n must be >= 3")
         self.side_a = side_a
         self.num_n = num_n
 
@@ -470,6 +507,8 @@ class Canvas(Type):
         return "Canvas"
 
     def push(self, shape: Shape) -> None:
+        if not isinstance(shape, Shape):
+            raise Exception("push(): 1. argument shape must be Shape")
         self.shapes.append(shape)
 
     def pop(self) -> Shape:

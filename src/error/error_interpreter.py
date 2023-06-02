@@ -20,7 +20,7 @@ class InvalidReturnTypeError(InterpreterError):
         super().__init__(
             f"Invalid return type. : [{ALL_TYPES[value]}] "
             f"expected: [{ALL_TYPES[expected]}]",
-            position
+            position,
         )
 
 
@@ -194,5 +194,32 @@ class InvalidIterableTypeError(InterpreterError):
         super().__init__(
             f"Invalid iterable type. : [{ALL_TYPES[value]}] "
             f"expected: [{ALL_TYPES[expected]}] ",
+            position,
+        )
+
+
+class MismatchedCallTypeError(InterpreterError):
+    def __init__(
+        self,
+        position: Position,
+        arguemnt: type,
+        parameter: type,
+        name: str,
+    ) -> None:
+        super().__init__(
+            f"Mismatched types in call [{name}]. : [{ALL_TYPES[arguemnt]}] "
+            f"expected: [{ALL_TYPES[parameter]}]",
+            position,
+        )
+
+
+class InvalidCallTypeError(InterpreterError):
+    def __init__(
+        self,
+        position: Position,
+        message: str,
+    ) -> None:
+        super().__init__(
+            f"{message}",
             position,
         )

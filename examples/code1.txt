@@ -1,12 +1,12 @@
 def main() {
-    Triangle t = Triangle(0, 0, 3, 4, 55);
+    Triangle t = Triangle(0.0, 0.0, 3.0, 4.0, 55.0);
     print(t.area());
 
-    Rectangle r = Rectangle(0, 0, 5, 4);
+    Rectangle r = Rectangle(0.0, 0.0, 5.0, 4.0);
     print(r.perimeter());
 
-    Square s = Square(0, 0, 5);
+    Square s = Square(0.0, 0.0, 5.0);
     print(s.d());
 
-    s.move(2, 3);
+    s.move(2.0, 3.0);
 }

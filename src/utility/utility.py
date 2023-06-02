@@ -136,7 +136,11 @@ ALL_TYPES: dict[type, str] = {
     Trapeze: "Trapeze",
     Polygon: "Polygon",
     Canvas: "Canvas",
-    None: "None"
+    None: "None",
+    Int: "int",
+    Dec: "dec",
+    Bool: "bool",
+    String: "String",
 }
 
 

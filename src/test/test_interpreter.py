@@ -2,17 +2,15 @@ import io
 
 import pytest
 
-from error.error_manager import ErrorManager
-from src.interpreter.interpreter import Interpreter
-from src.lexer.lexer import Lexer
-from src.parser.parser import Parser
 from error.error_interpreter import (DivisionByZeroError,
                                      InvalidAssignmentTypeError,
+                                     InvalidCallTypeError,
                                      InvalidDeclarationTypeError,
                                      InvalidIterableTypeError,
                                      InvalidReturnTypeError,
                                      InvalidUnaryOperatorError,
                                      MaximumRecursionDepthError,
+                                     MismatchedCallTypeError,
                                      MismatchedTypeError,
                                      MissingAssignmentValueError,
                                      MissingDeclarationValueError,
@@ -25,6 +23,10 @@ from error.error_interpreter import (DivisionByZeroError,
                                      MissingVariableDeclarationError,
                                      MissingWhileConditionError,
                                      NumberOfArgumentError, RedeclarationError)
+from error.error_manager import ErrorManager
+from src.interpreter.interpreter import Interpreter
+from src.lexer.lexer_for_parser import LexerForParser
+from src.parser.parser import Parser
 
 TEST_INTERPRETER_DATA: list[tuple[str, str]] = [
     (
@@ -145,7 +147,7 @@ TEST_INTERPRETER_DATA: list[tuple[str, str]] = [
         """
         def main(){
             Canvas c = Canvas();
-            c.push(Circle(0,0,1));
+            c.push(Circle(0.0,0.0,1.0));
             for(Shape s : c){
                 print(s.r());
             }
@@ -157,8 +159,8 @@ TEST_INTERPRETER_DATA: list[tuple[str, str]] = [
         """
         def main(){
             Canvas c = Canvas();
-            c.push(Square(0,0,2));
-            c.push(Rectangle(0,0,2,2));
+            c.push(Square(0.0,0.0,2.0));
+            c.push(Rectangle(0.0,0.0,2.0,2.0));
             for(Shape s : c){
                 print(s.area());
             }
@@ -181,7 +183,7 @@ TEST_INTERPRETER_DATA: list[tuple[str, str]] = [
             return "AAAA";
         }
         def Square e(){
-            return Square(0,0,2);
+            return Square(0.0,0.0,2.0);
         }
         def main(){
             print(a());
@@ -295,207 +297,234 @@ TEST_INTERPRETER_DATA: list[tuple[str, str]] = [
         """,
         r"A\tA\"A\nA" + "\n",
     ),
+    (
+        """#comment
+        def main(){#comment
+            print("AAA");#comment
+        }#comment
+        """,
+        "AAA\n",
+    ),
 ]
 
 
 @pytest.mark.parametrize("stream,expected", TEST_INTERPRETER_DATA)
 def test_interpreter_accept(stream, expected, capfd):
     with io.StringIO(stream) as stream_input:
-        lexer = Lexer(stream_input, ErrorManager())
+        lexer = LexerForParser(stream_input, ErrorManager())
         parser = Parser(lexer, ErrorManager())
         Interpreter(parser).interpret()
         out, err = capfd.readouterr()
         assert out == expected
 
 
-ERROR_INTERPRETER_DATA: list[tuple[str, ]] = [
+ERROR_INTERPRETER_DATA: list[tuple[str, Exception]] = [
     (
-        '''
+        """
         def main(){
             int a = 1 / 0;
         }
-        ''',
+        """,
         DivisionByZeroError,
     ),
     (
-        '''
+        """
         def a(){
             a();
         }
         def main(){
             a();
         }
-        ''',
+        """,
         MaximumRecursionDepthError,
     ),
     (
-        '''
+        """
         def main(){
             int a = 1.0;
         }
-        ''',
-        InvalidDeclarationTypeError
+        """,
+        InvalidDeclarationTypeError,
     ),
     (
-        '''
+        """
         def main(){
             int a = 1;
             a = 1.0;
         }
-        ''',
-        InvalidAssignmentTypeError
+        """,
+        InvalidAssignmentTypeError,
     ),
     (
-        '''
+        """
         def int a(){
             return 1.0;
         }
         def main(){
             a();
         }
-        ''',
-        InvalidReturnTypeError
+        """,
+        InvalidReturnTypeError,
     ),
     (
-        '''
+        """
         def main(){
             bool b = not 1 or 1;
         }
-        ''',
-        InvalidUnaryOperatorError
+        """,
+        InvalidUnaryOperatorError,
     ),
     (
-        '''
+        """
         def main(){
             int a = ;
         }
-        ''',
-        MissingDeclarationValueError
+        """,
+        MissingDeclarationValueError,
     ),
     (
-        '''
+        """
         def main(){
             if(){
 
             }
         }
-        ''',
-        MissingIfConditionError
+        """,
+        MissingIfConditionError,
     ),
     (
-        '''
+        """
         def main(){
             for(){
             }
         }
-        ''',
-        MissingForConditionError
+        """,
+        MissingForConditionError,
     ),
     (
-        '''
+        """
         def main(){
             while(){
             }
         }
-        ''',
-        MissingWhileConditionError
+        """,
+        MissingWhileConditionError,
     ),
     (
-        '''
+        """
         def main(){
             return;
         }
-        ''',
-        MissingReturnValueError
+        """,
+        MissingReturnValueError,
     ),
     (
-        '''
+        """
         def int a(){
             print("A");
         }
         def main(){
             a();
         }
-        ''',
-        MissingReturnTypeError
+        """,
+        MissingReturnTypeError,
     ),
     (
-        '''
+        """
         def main(){
-            Circle c = Circle(0,0);
+            Circle c = Circle(0.0,0.0);
         }
-        ''',
-        NumberOfArgumentError
+        """,
+        NumberOfArgumentError,
     ),
     (
-        '''
+        """
         def a(){
         }
-        ''',
-        MissingMainFunctionError
+        """,
+        MissingMainFunctionError,
     ),
     (
-        '''
+        """
         def main(){
             if( 1 == 1.0){
 
             }
         }
-        ''',
-        MismatchedTypeError
+        """,
+        MismatchedTypeError,
     ),
     (
-        '''
+        """
         def main(){
             int c = 1;
             for(Shape s : c){
 
             }
         }
-        ''',
-        InvalidIterableTypeError
+        """,
+        InvalidIterableTypeError,
     ),
     (
-        '''
+        """
         def main(){
             int a = 1;
             int a = 2;
         }
-        ''',
-        RedeclarationError
+        """,
+        RedeclarationError,
     ),
     (
-        '''
+        """
         def main(){
             print(a);
         }
-        ''',
-        MissingVariableDeclarationError
+        """,
+        MissingVariableDeclarationError,
     ),
     (
-        '''
+        """
         def main(){
             int a = 1;
             a = ;
         }
-        ''',
-        MissingAssignmentValueError
+        """,
+        MissingAssignmentValueError,
     ),
     (
-        '''
+        """
         def main(){
             int a = a();
         }
-        ''',
-        MissingFunctionDeclarationError
-    )
+        """,
+        MissingFunctionDeclarationError,
+    ),
+    (
+        """
+        def a(int a){
+            return a;
+        }
+        def main(){
+            a(True);
+        }
+        """,
+        MismatchedCallTypeError,
+    ),
+    (
+        """
+        def main(){
+            Circle c = Circle("12", 0, 0);
+        }
+        """,
+        InvalidCallTypeError,
+    ),
 ]
 
 
 @pytest.mark.parametrize("stream,expected", ERROR_INTERPRETER_DATA)
 def test_interpreter_error(stream, expected, capfd):
     with io.StringIO(stream) as stream_input:
-        lexer = Lexer(stream_input, ErrorManager())
+        lexer = LexerForParser(stream_input, ErrorManager())
         parser = Parser(lexer, ErrorManager())
         with pytest.raises(expected):
             Interpreter(parser).interpret()

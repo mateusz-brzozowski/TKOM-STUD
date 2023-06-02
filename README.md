@@ -90,28 +90,70 @@ Założenia dotyczące programu:
 - złożone
     - `String` - ciąg znaków
     - `Shape` - figura, jest to typ nadrzędny, dla pozostałych figur
+        - `area() -> dec` - metoda zwracająca pole powierzchni figury, dostępna dla każdej figury
+        - `perimeter() -> dec` - metoda zwraca obwód figury, dostępna dla każdej figury
+        - `move(x, y)` - metoda przesuwająca figurę o wektor, dostępna dla każdej figury
     - `Circle(x, y, r)` - koło
-        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
-        - jako argumenty podajemy promień koła, promień może być typu int lub float z wartością dodatnią.
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu dec
+        - jako argumenty podajemy promień koła, promień może być typu dec z wartością dodatnią.
+        - `r() -> dec` - metoda zwraca promień koła
+        - `d() -> dec` - metoda zwraca średnicę koła
     - `Square(x, y, a)` - kwadrat
-        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
-        - jako argumenty podajemy bok kwadratu, bok może być typu int lub float z wartością dodatnią.
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu dec
+        - jako argumenty podajemy bok kwadratu, bok może być typu dec z wartością dodatnią.
+        - `a() -> dec` - metoda zwraca bok kwadratu
+        - `d() -> dec` - metoda zwraca przekątną kwadratu
+        - `r() -> dec` - metoda zwraca promień okręgu wpisanego w kwadrat
+        - `R() -> dec` - metoda zwraca promień okręgu opisanego na kwadracie
     - `Rectangle(x, y, a, b)` - prostokąt
-        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
-        - jako argumenty podajemy boki kwadratu, boki mogą być typu int lub float z wartością dodatnią
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu dec
+        - jako argumenty podajemy boki kwadratu, boki mogą być typu dec z wartością dodatnią
+        - `a() -> dec` - metoda zwraca bok pierwszy prostokąta
+        - `b() -> dec` - metoda zwraca bok drugi prostokąta
+        - `d() -> dec` - metoda zwraca przekątną prostokąta
+        - `R() -> dec` - metoda zwraca promień okręgu opisanego na prostokącie
     - `Triangle(x, y, a, b, alfa)` - trójkąt
-        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
-        - jako argumenty podajemy dwa boki trójkąta i kąt pomiędzy nimi, boki mogą być typu int lub float z wartością dodatnią, natomiast kąt jest typu int z zakresu od 0 do 180.
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu dec
+        - jako argumenty podajemy dwa boki trójkąta i kąt pomiędzy nimi, boki mogą być typu dec z wartością dodatnią, kąt też jest typu dec.
+        - `a() -> dec` - metoda zwraca bok pierwszy trójkąta
+        - `b() -> dec` - metoda zwraca bok drugi trójkąta
+        - `c() -> dec` - metoda zwraca bok trzeci trójkąta
+        - `alfa() -> dec` - metoda zwraca kąt pomiędzy bokami `a()` i `b()` trójkąta
+        - `beta() -> dec` - metoda zwraca kąt pomiędzy bokami `b()` i `c()` trójkąta
+        - `gamma() -> dec` - metoda zwraca kąt pomiędzy bokami `c()` i `a()` trójkąta
+        - `h() -> dec` - metoda zwraca wysokość trójkąta
+        - `r() -> dec` - metoda zwraca promień okręgu wpisanego w trójkąt
+        - `R() -> dec` - metoda zwraca promień okręgu opisanego na trójkącie
     - `Rhomb(x, y, a, alfa)` - romb
-        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
-        - jako argumenty podajemy bok rombu i kąt pomiędzy nimi, bok może być typu int lub float z wartością dodatnią, natomiast kąt jest typu int z zakresu od 0 do 180.
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu dec
+        - jako argumenty podajemy bok rombu i kąt pomiędzy nimi, bok może być typu dec z wartością dodatnią, kąt też jest typu dec.
+        - `a() -> dec` - metoda zwraca bok rombu
+        - `alfa() -> dec` - metoda zwraca kąt pierwszy pomiędzy bokami rombu
+        - `beta() -> dec` - metoda zwraca kąt drugi pomiędzy bokami rombu
+        - `e() -> dec` - metoda zwraca pierwszą przekątną rombu
+        - `f() -> dec` - metoda zwraca drugą przekątną rombu
+        - `r() -> dec` - metoda zwraca promień okręgu wpisanego w romb
     - `Trapeze(x, y, a, b, c, alfa)` - trapez
-        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
-        - jako argumenty podajemy dwie podstawy trapezu, bok i ką jaki tworzy ten bok z dłuższą podstawą, boki mogą być typu int lub float z wartością dodatnią, natomiast kąt jest typu int z zakresu od 0 do 90.
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu dec
+        - jako argumenty podajemy dwie podstawy trapezu, bok i ką jaki tworzy ten bok z dłuższą podstawą, boki mogą być typu dec z wartością dodatnią, kąt też jest typu dec.
+        - `a() -> dec` - metoda zwraca pierwszą podstawę trapezu
+        - `b() -> dec` - metoda zwraca drugą podstawę trapezu
+        - `c() -> dec` - metoda zwraca pierwszy bok trapezu
+        - `d() -> dec` - metoda zwraca drugi bok trapezu
+        - `alfa() -> dec` - metoda zwraca kąt pomiędzy bokiem `c()` a podstawą `a()` trapezu
+        - `beta() -> dec` - metoda zwraca kąt pomiędzy bokiem `d()` a podstawą `a()` trapezu
+        - `h() -> dec` - metoda zwraca wysokość trapezu
+        - `r() -> dec` - metoda zwraca promień okręgu wpisanego w trapez
+        - `R() -> dec` - metoda zwraca promień okręgu opisanego na trapezie
     - `Polygon(x, y, a, n)` - wielokąt foremny
-        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu int lub flaot
-        - jako argumenty podajemy bok i ilość boków, bok może być typu int lub float z wartością dodatnią, natomiast ilość boków może być typu int o wartości co najmniej 3.
-    - `Canvas` - kolekcja figur
+        - pierwsze dwa argumenty, to współrzędne punktu początkowego, mogą być typu dec
+        - jako argumenty podajemy bok i ilość boków, bok może być typu dec z wartością dodatnią, natomiast ilość boków może być typu int.
+        - `a() -> dec` - metoda zwraca bok wielokąta
+        - `n() -> int` - metoda zwraca ilość boków wielokąta
+        - `alfa() -> dec` - metoda zwraca kąt pomiędzy bokami wielokąta
+        - `r() -> dec` - metoda zwraca promień okręgu wpisanego w wielokąt
+        - `R() -> dec` - metoda zwraca promień okręgu opisanego na wielokącie
+    - `Canvas()` - kolekcja figur
         - do kolekcji możemy dodawać figury `push(shape)`
         - usuwanie elementu z kolekcji `pop()`
         - wyświetlanie kolekcji `display()`
@@ -135,8 +177,6 @@ Założenia dotyczące programu:
 - `if`:
 ```c++
 if (warunek){
-
-} else if (warunek){
 
 } else {
 
@@ -182,7 +222,7 @@ isCircle = isRect;
 ```
 10. instrukcja print, służąca do wypisywania tekstu na ekranie
 ```python
-Triangle t = Triangle(3, 4, 55);
+Triangle t = Triangle(3.0, 4.0, 55.0);
 print(t.area());
 ```
 # Tokeny
@@ -276,7 +316,7 @@ return_statement    = "return", expression, ';';
 declaration         = argument_dec, ['=', expression], ';';
 assignment_or_exp   = [identifier, '='], expression, ';';
 
-logical_expression  = or_expression | "not" logical_expression;
+logical_expression  = or_expression;
 or_expression       = and_expression, {or_operator, and_expression};
 and_expression      = relative_expression,
                     {and_operator, relative_expression};
@@ -331,7 +371,10 @@ Komunikat składa się z numera wiersza lini oraz numera kolumny w którym dany 
 
 Napotkanie błędu nie powoduje zakończenia pracy programu, dopiero napotkanie błędu krytycznego, kończy działanie problemu.
 
-Błędy podzielone są na trzy kategorie, w zależności od tego w którym miejscu wystąpią, wyróżniamy:
+Błędy podzielone są na trzy kategorie, w zależności od tego w którym miejscu wystąpią, w ramach analizatora leksykalnego możemy napotkać błędy `LexerError`, a w analizatorze składniowym `ParserError`, błędy te nie powodują zatrzymania pracy programu, tylko zapisywane są w `ErrorManager` i wyświetlane na końcu działania programu.
+Natomiast błędy semantyczne, które mogą wystąpić w analizatorze semantycznym: `InterpreterError`, powodują zatrzymanie pracy programu, i wyświetlenie komunikatu użytkownikowi.
+
+Przykładowe błędy, które mogą wystąpić w programie:
 
 - `błędny leksykalne`
 
@@ -343,7 +386,7 @@ def main(){
 ```
 Komunikat błędu:
 ```cpp
-Error [2, 13]: Type 'int' value out of range.
+LexerError [2, 14]: Type 'int' value out of range. : [1]
 ```
 Kod:
 ```cpp
@@ -353,7 +396,7 @@ def main(){
 ```
 Komunikat błędu:
 ```cpp
-Error [2, 16]: Invalid character '$'.
+LexerError [2, 16]: Unexpected character. : [$]
 ```
 - `błędy składniowe`
 
@@ -365,7 +408,7 @@ def main() {
 ```
 Komunikat błędu:
 ```cpp
-Error [2, 16]: Invalid token, expected ';' before '}'.
+ParserError [3, 2]: Unexpected token. : [}] expected: [;]
 ```
 Kod:
 ```cpp
@@ -375,7 +418,7 @@ def main() {
 ```
 Komunikat błędu:
 ```cpp
-Error [2, 9]: Missing ';' before '0'.
+ParserError [2, 10]: Unexpected token. : [0] expected: [;]
 ```
 Kod:
 ```cpp
@@ -385,7 +428,7 @@ def main() {
 ```
 Komunikat błędu:
 ```cpp
-Error [2, 19]: Missing operator before '2'.
+ParserError [2, 20]: Unexpected token. : [2] expected: [)]
 ```
 - `błędy semantyczne`
 
@@ -397,17 +440,17 @@ int c = a + b;
 ```
 Komunikat błędu:
 ```cpp
-Error [3, 11]: Invalid conversion from 'bool' to 'int'.
+InterpreterError [3, 15]: Mismatched types. : [int] + [bool]
 ```
 Kod:
 ```cpp
 int a = 1;
-bool b = 0;
-int c = a / b;
+int b = 0;
+dec c = a / b;
 ```
 Komunikat błędu:
 ```cpp
-Error [3, 11]: Division by zero.
+InterpreterError [3, 15]: Division by zero.
 ```
 Kod:
 ```cpp
@@ -420,7 +463,7 @@ def main(){
 ```
 Komunikat błędu:
 ```cpp
-Error [5, 0]: Invalid 1. argument conversion from 'bool' to 'int'.
+InterpreterError [5, 15]: Mismatched types in call [pow]. : [bool] expected: [int]
 ```
 # Sposób Uruchomiania
 
@@ -433,7 +476,7 @@ Sposób instalacji: `pip3 install -r requirements.txt`.
 Przykładowy sposób uruchomienia:
 
 ```bash
-$ ./run.py code.txt
+$ ./main.py code.txt
 ```
 
 Wynik programu:
@@ -446,61 +489,76 @@ Projekt zawiera testy jednostkowe oraz testy integracyjne, sprawdzające poprawn
 
 Wykorzystywana biblioteka: `pytest`
 
+Wszystkie testy znajdują się w folderze [tests](./src/test/), są one podzielone na trzy grupy, testy lexera, parsera i interpretera, w ramach których znajdują się sparametryzowane testy
+
 Testy podzielone sa na kilka kategorii:
 - działanie analizatora leksykalnego, czy podany kod został przetworzony, na poprawną listę tokenów, oczywiście będą sprawdzane też przykłady wymienione w sekcji `Obsługa błędów`:
 
 Kod:
 ```cpp
-int a = 10 + 5 * 2;
+1.0
+2.0
+312
 ```
 Przykładowy Wynik:
 ```c++
-<int, type>
-<a, identifier>
-<=, symbol>
-<10, integer>
-<+, symbol>
-<5, integer>
-<* , symbol>
-<2, integer>
-<;, symbol>
+TokenType.DECIMAL_VALUE.name,
+TokenType.DECIMAL_VALUE.name,
+TokenType.INTEGER_VALUE.name,
 ```
+
 Kod:
 ```cpp
-def main(){
-    int x = 123$123;
-}
+"asd
 ```
 Przykładowy Wynik:
 ```cpp
-Error [2, 16]: Invalid character '$'.
+UnterminatedStringError
 ```
 - działanie analizatora składniowego, czy listę tokenów został przetworzony na poprawne drzewo składniowe, oczywiście będą sprawdzane też przykłady wymienione w sekcji `Obsługa błędów`
+
+- Test popranie działającego programu:
+```cpp
+int x;
+```
+Oczekiwany wynik:
+```cpp
+DeclarationStatement(Position(1, 9), (Int, "x")
+```
 
 - Test programu zawierającego błąd składniowy
 ```cpp
 def main() {
-    int x = 5;
-    int y = 10;
-    if (x < y {
-        print("x is less than y");
+    if ( {
+        int x = 1;
     }
 }
 ```
 Oczekiwany wynik:
 ```cpp
-Error [4, 14]: Invalid token, expected ')' before '{'.
+MissingExpressionError
 ```
 - działanie analizatora semantycznego, czy program poprawnie działa, czy rzucane są odpowiednie wyjątki, oczywiście będą sprawdzane też przykłady wymienione w sekcji `Obsługa błędów`
 
+- Test popranie działającego programu:
 ```cpp
-def divide(a: int, b: int) {
-    return a / b;
+def main(){
+    print("WORKS");
 }
 ```
 Oczekiwany wynik:
 ```cpp
-Error [4, 14]: Invalid return type, expected non-return type
+WORKS
+```
+
+```cpp
+def main(){
+    Circle c = Circle(0.0,0.0);
+}
+```
+Oczekiwany wynik:
+```cpp
+NumberOfArgumentError
 ```
 - Do testów zostaną załączone oczywiście wszystkie przykładowe fragmenty kodu podane w sekcji `przykłady wykorzystania języka`, a także te z sekcji `Obsługa błędów`
 
@@ -514,12 +572,46 @@ Error [4, 14]: Invalid return type, expected non-return type
 
 # Sposób realizacji
 
-- Analizator leksykalny - Odpowiedzialny za przerobienie kodu źródłowego na sekwencję tokenów
 
-- Analizator składniowy - Sprawdza, czy sekwencja tokenów odpowiada zdefiniowanemu w gramatyce języka programowania i tworzy z nich drzewo składniowe.
+## Analizator leksykalny
+Analizator leksykalny, znajdujący się w pliku [lexer.py](./src/lexer/lexer.py) jest odpowiedzialny za przetworzenie kodu źródłowego na sekwencję tokenów. Przetwarza strumień danych znak po znaku zwracając odpowiednie tokeny. Metoda `lexer.next_token()` zwraca kolejny token.
 
-- Analizator semantyczny - Wykonuje analizę semantyczną na drzewie składniowym, sprawdzając poprawność wykorzystania zmiennych, typów danych i wyrażeń.
+Tokeny są podstawowymi jednostkami składniowymi w języku programowania, takimi jak identyfikatory, słowa kluczowe, symbole, liczby, czy też znaki specjalne ich implementacja znajduje się w pliku [token_manager.py](./src/lexer/token_manager.py).
 
+Przykładowy sposób wywołania analizatora leksykalnego:
+```py
+lexer = Lexer(stream, ErrorManager())
+while lexer.next_token().token_type.name != TokenType.EOF.name:
+    pass
+```
+
+# Analizator składniowy
+Analizator składniowy, znany również jako parser, ma za zadanie sprawdzić, czy sekwencja tokenów jest zgodna z gramatyką języka programowania. Gramatyka określa zasady składniowe języka, takie jak kolejność tokenów i ich struktura.
+
+Analizator składniowy, znajdujący się w pliku [parser.py](./src/parser/parser.py) pobiera kolejne tokeny z analizatora leksykalnego i na tej podstawie, token po tokenie tworzy drzewo składniowe, które reprezentuje strukturę gramatyczną kodu źródłowego, `parser.parse_program()` jest metodą odpowiedzialną za tworzenie drzewa składniowego. Obiekty jakie mogą zostać utworzone, znajdują się w folderze [objects](./src/parser/objects)
+
+Aby pominąć komentarze, została utworzona warstwa pośrednia `LexerForParser, znajdująca się w pliku [lexer_for_parser.py](./src/lexer/lexer_for_parser.py), która filtruje tokeny, usuwając komentarze, a następnie przekazuje je do analizatora składniowego.
+
+Przykładowy sposób wywołania analizatora składniowego:
+```py
+lexer = LexerForParser(stream_input, ErrorManager())
+parser = Parser(lexer, ErrorManager())
+tree = parser.parse_program()
+```
+# Analizator semantyczny
+
+Analizator semantyczny przeprowadza analizę semantyczną na drzewie składniowym wygenerowanym przez analizator składniowy. Jego głównym zadaniem jest sprawdzenie poprawności użycia zmiennych, typów danych i wyrażeń w kodzie programu.
+
+Analizator semantyczny znajdujący się w pliku [interpreter.py](./src/interpreter/interpreter.py) sprawdza, czy wszystkie odwołania do zmiennych są poprawne, czy typy danych są zgodne i czy wyrażenia są używane w prawidłowy sposób. W przypadku wykrycia błędów semantycznych, generuje odpowiednie komunikaty o błędach lub ostrzeżenia. Analiza semantyczna pozwala zapewnić logiczną poprawność kodu źródłowego przed wykonaniem programu.
+
+Wynikiem działania analizatora semantycznego jest wyświetlenie obrazu na ekranie, a także wypisanie tekstu w konsoli.
+
+Przykładowy sposób wywołania analizatora semantycznego:
+```py
+lexer = LexerForParser(stream_input, ErrorManager())
+parser = Parser(lexer, ErrorManager())
+Interpreter(parser).interpret()
+```
 # przykłady wykorzystania języka
 
 - definiowanie typów
@@ -540,26 +632,26 @@ def main() {
 - wyznaczanie pola, obwodu, przekątnej, przesuwanie o wektor figury
 ```c++
 def main() {
-    Triangle t = Triangle(0, 0, 3, 4, 55);
+    Triangle t = Triangle(0.0, 0.0, 3.0, 4.0, 55.0);
     print(t.area());
 
-    Rectangle r = Rectangle(0, 0, 5, 4);
+    Rectangle r = Rectangle(0.0, 0.0, 5.0, 4.0);
     print(r.perimeter());
 
-    Square s = Square(0, 0, 5);
+    Square s = Square(0.0, 0.0, 5.0);
     print(s.d());
 
-    s.move(2, 3);
+    s.move(2.0, 3.0);
 }
 ```
 - dodawanie/usuwanie figur do/z kolekcji i wyświetlanie ich
 ```c++
 def main(){
     Canvas c = Canvas();
-    Circle circle = Circle(0, 0, 6);
-    Polygon p = Polygon(10, 20, 5, 6);
-    Rhomb r = Rhomb(6, 20, 4, 60);
-    Trapeze t = Trapeze(8, 9, 6, 8, 6, 90);
+    Circle circle = Circle(0.0, 0.0, 6.0);
+    Polygon p = Polygon(10.0, 20.0, 5.0, 6);
+    Rhomb r = Rhomb(6.0, 20.0, 4.0, 60.0);
+    Trapeze t = Trapeze(8.0, 9.0, 6.0, 8.0, 6.0, 90.0);
     c.push(circle);
     c.push(p);
     c.push(r);
@@ -568,18 +660,21 @@ def main(){
     c.display();
 }
 ```
+Wynik działania programu:
+![](./examples/code2.png)
+
 - pętle, instrukcje warunkowe i iterowanie po kolekcji
 ```c++
 def main(){
-    Rectangle r = Rectangle(0, 0, 5, 4);
+    Rectangle r = Rectangle(0.0, 0.0, 5.0, 4.0);
     dec r_per = r.perimeter();
 
-    Square s = Square(0, 0, 5);
+    Square s = Square(0.0, 0.0, 5.0);
     dec s_per = s.perimeter();
 
     dec suma = 0.0;
 
-    if ( s.area() != 2.5 or r_per == 2) {
+    if ( s.area() != 2.5 or r_per == 2.0) {
         print(s.d());
     }
 
@@ -590,38 +685,41 @@ def main(){
         print(suma);
     }
 
-    int i = 0;
+    dec i = 0.0;
     Canvas c = Canvas();
-    while ( i <= 20 ) {
+    while ( i <= 20.0 ) {
         c.push(Circle(i, i, i));
-        i = i + 1;
+        i = i + 1.0;
     }
 
     for ( Shape shape : c) {
-        shape.move(3, 10);
+        shape.move(3.0, 10.0);
     }
 
     c.display();
 }
 ```
+Wynik działania programu:
+![](./examples/code3.png)
+
 - definiowanie funkcji i rekursywne wywołanie
 ```c++
-def Square gasket(int x, int y, dec dim, Canvas c){
-    dec new_dim = dim - 2.0;
-    if ( dim < 8) {
+def Square gasket(dec x, dec y, dec dim, Canvas c){
+    if ( dim < 8.0) {
         return Square(x, y, dim);
     } else {
+        dec new_dim = dim / 2.0;
         gasket(x, y, new_dim, c);
         gasket(x + new_dim, y, new_dim, c);
         gasket(x + new_dim, y + new_dim, new_dim, c);
     }
 }
 
-def Triangle getTriangle(int x, int y, int height, int width){
-    return Triangle(x, y, width / 2, height, 90);
+def Triangle getTriangle(dec x, dec y, dec height, dec width){
+    return Triangle(x, y, width / 2.0, height, 90.0);
 }
 
-def printInformation(Shape shape){
+def printInformation(Triangle shape){
     # pole
     print(shape.area());
     # obwód
@@ -630,9 +728,9 @@ def printInformation(Shape shape){
 
 def main(){
     Canvas c = Canvas();
-    c.push(gasket(0,0, 6.0, c));
+    c.push(gasket(0.0, 0.0, 248.0, c));
     c.display();
-    Triangle t = getTriangle(0, 10, 20, 30);
+    Triangle t = getTriangle(0.0, 10.0, 20.0, 30.0);
 
     printInformation(t);
 }

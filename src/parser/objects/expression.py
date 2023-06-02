@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 from copy import deepcopy
 from parser.objects.node import Node
 from parser.objects.type import Dec, Int
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
-from utility.utility import Position
+if TYPE_CHECKING:
+    from utility.utility import Position
 
 
 class Expression(Node):
