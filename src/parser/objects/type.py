@@ -269,16 +269,13 @@ class Triangle(Shape):
         )
 
     def alfa(self) -> float:
-        return float(self.angle_alfa * (math.pi / 180))
+        return float(self.angle_alfa * (180 / math.pi))
 
     def beta(self) -> float:
-        return float(
-            math.asin(self.b() * math.sin(self.alfa()) / self.c())
-            * (math.pi / 180)
-        )
+        return float(math.asin(self.side_b * math.sin(self.angle_alfa) / self.c()) * (180 / math.pi))
 
     def gamma(self) -> float:
-        return float(math.pi - self.alfa() - self.beta() * (math.pi / 180))
+        return float(180 - self.alfa() - self.beta())
 
     def display(self) -> None:
         return patches.Polygon(
@@ -328,19 +325,19 @@ class Rhomb(Shape):
         return float(self.side_a)
 
     def alfa(self) -> float:
-        return float(self.angle_alfa * (math.pi / 180))
+        return float(self.angle_alfa * (180 / math.pi))
 
     def beta(self) -> float:
-        return float(math.pi - self.alfa())
+        return float(180.0 - self.alfa())
 
     def e(self) -> float:
-        return float(self.a() * math.sqrt(2 - 2 * math.cos(self.alfa())))
+        return float(self.a() * math.sqrt(2 - 2 * math.cos(self.angle_alfa)))
 
     def f(self) -> float:
-        return float(self.a() * math.sqrt(2 - 2 * math.cos(self.beta())))
+        return float(self.a() * math.sqrt(2 - 2 * math.cos(self.angle_beta())))
 
     def r(self) -> float:
-        return float(self.a() * math.sin(self.alfa()) / 2)
+        return float(self.a() * math.sin(self.angle_alfa) / 2)
 
     def display(self) -> None:
         return patches.Polygon(
@@ -420,10 +417,10 @@ class Trapeze(Shape):
         )
 
     def alfa(self) -> float:
-        return float(self.angle_alfa * (math.pi / 180))
+        return float(self.angle_alfa * (180 / math.pi))
 
     def beta(self) -> float:
-        return float(math.sin(self.h() / self.d()) * (math.pi / 180))
+        return float(math.sin(self.h() / self.d()) * (180 / math.pi))
 
     def r(self) -> float:
         return float(self.area() / (self.perimeter() / 2))
