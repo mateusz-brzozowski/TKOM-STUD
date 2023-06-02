@@ -21,7 +21,8 @@ class UnexpectedTokenError(ParserError):
         expected: TokenType,
     ) -> None:
         super().__init__(
-            f"""Unexpected token. : [{token.value}] expected: [{expected.value}]""",
+            f"Unexpected token. : [{token.value}] "
+            f"expected: [{expected.value}]",
             position,
         )
 

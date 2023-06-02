@@ -34,9 +34,7 @@ class Shape(Type):
     x: float
     y: float
 
-    def __init__(
-        self, x: float = 0, y: float = 0
-    ) -> None:
+    def __init__(self, x: float = 0, y: float = 0) -> None:
         if not isinstance(x, float):
             raise Exception("Shape(): 1. argument x must be dec")
         if not isinstance(y, float):
@@ -272,7 +270,10 @@ class Triangle(Shape):
         return float(self.angle_alfa * (180 / math.pi))
 
     def beta(self) -> float:
-        return float(math.asin(self.side_b * math.sin(self.angle_alfa) / self.c()) * (180 / math.pi))
+        return float(
+            math.asin(self.side_b * math.sin(self.angle_alfa) / self.c())
+            * (180 / math.pi)
+        )
 
     def gamma(self) -> float:
         return float(180 - self.alfa() - self.beta())

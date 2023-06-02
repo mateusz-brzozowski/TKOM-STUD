@@ -202,12 +202,12 @@ class MismatchedCallTypeError(InterpreterError):
     def __init__(
         self,
         position: Position,
-        arguemnt: type,
+        argument: type,
         parameter: type,
         name: str,
     ) -> None:
         super().__init__(
-            f"Mismatched types in call [{name}]. : [{ALL_TYPES[arguemnt]}] "
+            f"Mismatched types in call [{name}]. : [{ALL_TYPES[argument]}] "
             f"expected: [{ALL_TYPES[parameter]}]",
             position,
         )
