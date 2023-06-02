@@ -75,7 +75,7 @@ class Interpreter(Visitor):
             main_call = CallExpression(
                 main_function.position, None, main_function.name, []
             )
-            self._visit_CallExpression(main_call)
+            self.visit(main_call)
         else:
             raise MissingMainFunctionError(Position(0, 0))
 
@@ -239,6 +239,7 @@ class Interpreter(Visitor):
             )
 
         return_value = None
+        self.return_value = None
         self.visit(function.block)
 
         return_value = self._get_value(self.return_value)
@@ -504,7 +505,11 @@ class Interpreter(Visitor):
         return left / right
 
     def _accept_int(self, value: float) -> int:
+        if type(value) not in [float, bool]:
+            raise InvalidCallTypeError(Position(0, 0), value)
         return int(value)
 
     def _accept_dec(self, value: int) -> float:
+        if type(value) not in [int, bool]:
+            raise InvalidCallTypeError(Position(0, 0), value)
         return float(value)

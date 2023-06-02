@@ -7,7 +7,7 @@ from interpreter.variable import Variable
 class Environment:
     function_scope: Scope
     local_scope: Scope
-    last_scope: Scope
+    last_scope: list[Scope]
     recursion_depth: int
 
     def __init__(self) -> None:
